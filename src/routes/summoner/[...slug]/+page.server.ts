@@ -1,3 +1,4 @@
+import getRegion from '$lib/getRegion.js';
 import { redirect } from '@sveltejs/kit';
 
 let RIOT_API_KEY: string | undefined;
@@ -10,16 +11,36 @@ if (process.env.NODE_ENV === 'production') {
 
 export const load = async ({ params }) => {
 	const slugArr = params.slug.split('/', 2);
-	const region = slugArr[0];
+	const region = getRegion(slugArr[0]);
 	const username = slugArr[1];
 
-	const data = await getSummonerData(region, username).then((summonerData) => {
-		return getRankData(region, summonerData.id).then((rankData) => {
-			return { summonerData, rankData };
+	const data = await getSummonerData(region[0], username).then((summonerData) => {
+		return getRankData(region[0], summonerData.id).then((rankData) => {
+			return getMatchIds(region[1], summonerData.puuid).then((matchData) => {
+				let matchPromises: Promise<any>[] = [];
+				matchData.forEach((matchId: string) => {
+					matchPromises.push(getMatchData(region[1], matchId));
+				});
+
+				return {
+					summonerData,
+					rankData,
+					matches: Promise.all(matchPromises).then((matches) => {
+						//write in every match if the player won or lost
+						matches.forEach((match) => {
+							match.info.participants.forEach((participant: any) => {
+								if (participant.puuid === summonerData.puuid) {
+									match.currentSummoner = participant;
+								}
+							});
+						});
+
+						return matches;
+					})
+				};
+			});
 		});
 	});
-
-	console.log(data);
 
 	if (data.summonerData.status?.status_code === 404) {
 		throw redirect(302, '/');
@@ -45,4 +66,20 @@ async function getRankData(region: string, summonerId: string) {
 	);
 	const rankDataJson = await rankData.json();
 	return rankDataJson;
+}
+
+async function getMatchIds(region: string, puuid: string) {
+	const matchData = await fetch(
+		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&api_key=${RIOT_API_KEY}`
+	);
+	const matchDataJson = await matchData.json();
+	return matchDataJson;
+}
+
+async function getMatchData(region: string, matchId: string) {
+	const matchData = await fetch(
+		`https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${RIOT_API_KEY}`
+	);
+	const matchDataJson = await matchData.json();
+	return matchDataJson;
 }

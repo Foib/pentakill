@@ -2,38 +2,38 @@ export default function getRegion(region: string) {
 	region = region.toLowerCase();
 	switch (region) {
 		case 'br':
-			return 'br1';
+			return ['br1', 'americas'];
 		case 'eune':
-			return 'eun1';
+			return ['eun1', 'europe'];
 		case 'euw':
-			return 'euw1';
+			return ['euw1', 'europe'];
 		case 'jp':
-			return 'jp1';
+			return ['jp1', 'asia'];
 		case 'kr':
-			return 'kr';
+			return ['kr', 'asia'];
 		case 'lan':
-			return 'la1';
+			return ['la1', 'americas'];
 		case 'las':
-			return 'la2';
+			return ['la2', 'americas'];
 		case 'na':
-			return 'na1';
+			return ['na1', 'americas'];
 		case 'oce':
-			return 'oc1';
+			return ['oc1', 'sea'];
 		case 'ph':
-			return 'ph2';
+			return ['ph2', 'sea'];
 		case 'ru':
-			return 'ru';
+			return ['ru', 'europe'];
 		case 'sg':
-			return 'sg2';
+			return ['sg2', 'sea'];
 		case 'th':
-			return 'th2';
+			return ['th2', 'sea'];
 		case 'tr':
-			return 'tr1';
+			return ['tr1', 'europe'];
 		case 'tw':
-			return 'tw2';
+			return ['tw2', 'sea'];
 		case 'vn':
-			return 'vn2';
+			return ['vn2', 'sea'];
 		default:
-			return '';
+			return ['', ''];
 	}
 }

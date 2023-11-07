@@ -25,7 +25,7 @@
 
 	function redirectToSummoner() {
 		if (summonerName !== '') {
-			window.location.href = `summoner/${getRegion(region)}/${summonerName}`;
+			window.location.href = `summoner/${region.toLowerCase()}/${summonerName}`;
 		}
 	}
 </script>
