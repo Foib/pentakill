@@ -1,10 +1,31 @@
 <script lang="ts">
+	import getRegion from '$lib/getRegion';
+
 	let region = 'NA';
 	let summonerName = '';
 
+	const regions = [
+		'NA',
+		'EUW',
+		'EUNE',
+		'OCE',
+		'KR',
+		'JP',
+		'BR',
+		'LAS',
+		'LAN',
+		'RU',
+		'TR',
+		'SG',
+		'PH',
+		'TW',
+		'VN',
+		'TH'
+	];
+
 	function redirectToSummoner() {
 		if (summonerName !== '') {
-			window.location.href = `summoner/${region}1/${summonerName}`;
+			window.location.href = `summoner/${getRegion(region)}/${summonerName}`;
 		}
 	}
 </script>
@@ -17,8 +38,9 @@
 			class="pl-4 bg-transparent text-league-gold-4 cursor-pointer outline-none"
 			bind:value={region}
 		>
-			<option class="text-league-gold-1 bg-league-hextech-black">NA</option>
-			<option class="text-league-gold-1 bg-league-hextech-black">EUW</option>
+			{#each regions as r}
+				<option class="text-league-gold-1 bg-league-hextech-black">{r}</option>
+			{/each}
 		</select>
 		<input
 			type="text"
