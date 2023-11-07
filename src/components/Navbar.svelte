@@ -1,4 +1,4 @@
-<div class="sticky top-0">
+<div class="sticky top-0 z-50">
 	<nav class="h-16 flex items-center px-4 bg-league-hextech-black">
 		<a
 			class="mr-32 text-league-gold-4 hover:text-league-gold-1 font-beaufort font-bold text-4xl transition-all"
@@ -16,7 +16,7 @@
 			>
 			<a
 				class="flex items-center justify-center w-1/3 h-full text-center text-league-gold-1 opacity-50 hover:opacity-100 font-beaufort font-semibold text-lg transition-all"
-				href="/profile">PROFILE</a
+				href="/tracker">TRACKER</a
 			>
 		</div>
 	</nav>
