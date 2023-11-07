@@ -1,6 +1,12 @@
 <script lang="ts">
 	let region = 'NA';
 	let summonerName = '';
+
+	function redirectToSummoner() {
+		if (summonerName !== '') {
+			window.location.href = `summoner/${region}1/${summonerName}`;
+		}
+	}
 </script>
 
 <main class="w-full h-screen flex justify-center items-center">
@@ -19,14 +25,15 @@
 			placeholder="Username"
 			class="w-full bg-transparent text-xl text-league-gold-1 placeholder:text-league-grey-2 outline-none"
 			bind:value={summonerName}
+			on:keypress={(e) => {
+				if (e.key === 'Enter') {
+					redirectToSummoner();
+				}
+			}}
 		/>
 		<button
 			class="w-16 pr-4 flex justify-center items-center text-league-gold-4 hover:text-league-gold-1 outline-none transition-all"
-			on:click={() => {
-				if (summonerName !== '') {
-					window.location.href = `summoner/${region}1/${summonerName}`;
-				}
-			}}
+			on:click={redirectToSummoner}
 		>
 			<span class="material-symbols-outlined"> search </span>
 		</button>
