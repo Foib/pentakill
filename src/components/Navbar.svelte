@@ -20,5 +20,5 @@
 			>
 		</div>
 	</nav>
-	<div class="h-[1px] bg-gradient-to-r from-league-gold-5 to-league-gold-4" />
+	<div class="h-[2px] bg-gradient-to-r from-league-gold-5 to-league-gold-4" />
 </div>

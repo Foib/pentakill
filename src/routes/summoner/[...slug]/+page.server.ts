@@ -1,4 +1,5 @@
 import getRegion from '$lib/getRegion.js';
+import { isRiotStatusCode, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { error, redirect } from '@sveltejs/kit';
 
 let RIOT_API_KEY: string | undefined;
@@ -19,7 +20,9 @@ export const load = async ({ params }) => {
 	}
 
 	const data = await getSummonerData(region[0], username).then((summonerData) => {
-		checkIfStatusIsError(summonerData);
+		if (isRiotStatusCode(summonerData)) {
+			throw error(404, 'Not Found');
+		}
 
 		return getRankData(region[0], summonerData.id).then((rankData) => {
 			checkIfStatusIsError(rankData);
@@ -27,32 +30,21 @@ export const load = async ({ params }) => {
 			return getMatchIds(region[1], summonerData.puuid).then((matchData) => {
 				checkIfStatusIsError(matchData);
 
-				let matchPromises: Promise<any>[] = [];
+				let matchPromises: Promise<CustomMatchDto>[] = [];
 				matchData.forEach((matchId: string) => {
-					matchPromises.push(getMatchData(region[1], matchId));
+					matchPromises.push(getMatchData(region[1], matchId, summonerData));
 				});
 
 				return {
 					summonerData,
 					rankData,
-					matches: Promise.all(matchPromises).then((matches) => {
-						//write in every match if the player won or lost
-						matches.forEach((match) => {
-							match.info.participants.forEach((participant: any) => {
-								if (participant.puuid === summonerData.puuid) {
-									match.currentSummoner = participant;
-								}
-							});
-						});
-
-						return matches;
-					})
+					matches: Promise.all(matchPromises)
 				};
 			});
 		});
 	});
 
-	if (data.summonerData.status?.status_code === 404) {
+	if (isRiotStatusCode(data.summonerData) && data.summonerData.status.status_code === 404) {
 		throw redirect(302, '/');
 	} else {
 		return {
@@ -69,11 +61,11 @@ function checkIfStatusIsError(data: any) {
 }
 
 async function getSummonerData(region: string, username: string) {
-	const summonerData = await fetch(
+	const summonerDataJson = await fetch(
 		`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}?api_key=${RIOT_API_KEY}`
 	);
-	const summonerDataJson = await summonerData.json();
-	return summonerDataJson;
+	const summonerData: SummonerDto | RiotStatusCode = await summonerDataJson.json();
+	return summonerData;
 }
 
 async function getRankData(region: string, summonerId: string) {
@@ -85,17 +77,24 @@ async function getRankData(region: string, summonerId: string) {
 }
 
 async function getMatchIds(region: string, puuid: string) {
-	const matchData = await fetch(
+	const matchDataJson = await fetch(
 		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&api_key=${RIOT_API_KEY}`
 	);
-	const matchDataJson = await matchData.json();
-	return matchDataJson;
+	const matchData: string[] = await matchDataJson.json();
+	return matchData;
 }
 
-async function getMatchData(region: string, matchId: string) {
-	const matchData = await fetch(
+async function getMatchData(region: string, matchId: string, summonerData: any) {
+	const matchDataJson = await fetch(
 		`https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${RIOT_API_KEY}`
 	);
-	const matchDataJson = await matchData.json();
-	return matchDataJson;
+	const matchData: CustomMatchDto = await matchDataJson.json();
+	matchData.info.participants.forEach((participant: any) => {
+		if (participant.puuid === summonerData.puuid) {
+			matchData.currentSummoner = participant;
+		}
+	});
+	return matchData;
 }
+
+type CustomMatchDto = MatchDto & { currentSummoner: ParticipantDto };

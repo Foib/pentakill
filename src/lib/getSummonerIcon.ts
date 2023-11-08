@@ -1,4 +1,4 @@
-export default async function getSummonerIcon(iconId: string) {
+export default async function getSummonerIcon(iconId: number) {
 	const version = (
 		await (await fetch('https://ddragon.leagueoflegends.com/api/versions.json')).json()
 	)[0];
