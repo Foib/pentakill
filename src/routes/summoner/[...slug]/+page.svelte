@@ -72,8 +72,8 @@
 											: 'bg-rose-950'}"
 									>
 										<div class="flex flex-col">
-											<div class="flex gap-1">
-												<div class="w-16 h-16 rounded-2xl overflow-hidden opacity-100">
+											<div class="flex gap-1 h-16">
+												<div class="w-16 h-16 rounded-md overflow-hidden opacity-100">
 													<img
 														src="http://ddragon.leagueoflegends.com/cdn/{ddragonVersion}/img/champion/{match
 															.currentSummoner.championName}.png"
@@ -83,16 +83,20 @@
 												</div>
 
 												<div class="flex flex-col gap-1 justify-center">
-													<div class="h-7 w-7 rounded-md overflow-hidden">
-														{#await getSummonerSpellIcon(ddragonVersion, match.currentSummoner.summoner1Id, summonerSpellData) then spell1Icon}
-															<img src={spell1Icon} alt="Summoner Spell 1" />
-														{/await}
-													</div>
-													<div class="h-7 w-7 rounded-md overflow-hidden">
-														{#await getSummonerSpellIcon(ddragonVersion, match.currentSummoner.summoner2Id, summonerSpellData) then spell2Icon}
-															<img src={spell2Icon} alt="Summoner Spell 2" />
-														{/await}
-													</div>
+													{#await getSummonerSpellIcon(ddragonVersion, match.currentSummoner.summoner1Id, summonerSpellData) then spell1Icon}
+														<img
+															src={spell1Icon}
+															alt="Summoner Spell 1"
+															class="w-[30px] aspect-square rounded-md"
+														/>
+													{/await}
+													{#await getSummonerSpellIcon(ddragonVersion, match.currentSummoner.summoner2Id, summonerSpellData) then spell2Icon}
+														<img
+															src={spell2Icon}
+															alt="Summoner Spell 2"
+															class="w-[30px] aspect-square rounded-md"
+														/>
+													{/await}
 												</div>
 											</div>
 
@@ -103,7 +107,6 @@
 												<span class="text-league-grey-1.5">/</span>
 												<span>{match.currentSummoner.assists}</span>
 											</div>
-											<!-- KDA -->
 											<span class="text-league-grey-1"
 												>{(
 													(match.currentSummoner.kills + match.currentSummoner.assists) /
