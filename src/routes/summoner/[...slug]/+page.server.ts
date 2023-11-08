@@ -1,5 +1,5 @@
 import getRegion from '$lib/getRegion.js';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 let RIOT_API_KEY: string | undefined;
 
@@ -14,9 +14,19 @@ export const load = async ({ params }) => {
 	const region = getRegion(slugArr[0]);
 	const username = slugArr[1];
 
+	if (!region || !username) {
+		throw error(404, 'Not Found');
+	}
+
 	const data = await getSummonerData(region[0], username).then((summonerData) => {
+		checkIfStatusIsError(summonerData);
+
 		return getRankData(region[0], summonerData.id).then((rankData) => {
+			checkIfStatusIsError(rankData);
+
 			return getMatchIds(region[1], summonerData.puuid).then((matchData) => {
+				checkIfStatusIsError(matchData);
+
 				let matchPromises: Promise<any>[] = [];
 				matchData.forEach((matchId: string) => {
 					matchPromises.push(getMatchData(region[1], matchId));
@@ -51,6 +61,12 @@ export const load = async ({ params }) => {
 		};
 	}
 };
+
+function checkIfStatusIsError(data: any) {
+	if (data.status?.status_code === 404) {
+		throw error(404, 'Not Found');
+	}
+}
 
 async function getSummonerData(region: string, username: string) {
 	const summonerData = await fetch(

@@ -30,7 +30,7 @@
 	}
 </script>
 
-<main class="w-full h-screen flex justify-center items-center">
+<main class="w-full h-[calc(100vh-64px)] flex justify-center items-center">
 	<div
 		class="w-[500px] h-16 flex gap-4 border border-league-gold-5 focus-within:border-league-gold-1 rounded-full overflow-hidden font-spiegel transition-all"
 	>
