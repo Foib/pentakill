@@ -7,7 +7,6 @@
 
 - Summoner match history
   - Show more information
-    - Use league client match history as reference
 - Add leaderboard
 - Add tracker
 - Save last selected region

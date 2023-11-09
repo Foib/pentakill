@@ -17,7 +17,13 @@
 
 	function formatGameDuration(duration: number) {
 		duration = duration / 60;
-		return Math.floor(duration) + ':' + Math.round((((duration * 10) % 10) / 10) * 60);
+		return (
+			Math.floor(duration).toString().padStart(2, '0') +
+			':' +
+			Math.round((((duration * 10) % 10) / 10) * 60)
+				.toString()
+				.padStart(2, '0')
+		);
 	}
 </script>
 
