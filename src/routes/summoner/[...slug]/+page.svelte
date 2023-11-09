@@ -1,158 +1,95 @@
 <script lang="ts">
 	import getSummonerIcon from '$lib/getSummonerIcon.js';
+	import type { CustomMatchDto } from '$lib/riotTypes/Misc.js';
 	import { onMount } from 'svelte';
+	import {
+		ddragonVersionStore,
+		storesInitialized,
+		summonerSpellDataStore
+	} from '../../../stores.js';
+	import getSummonerSpellIcon from '$lib/getSummonerSpellIcon.js';
+	import MatchHistoryItem from '../../../components/matchHistory/MatchHistoryItem.svelte';
 
 	export let data;
 
-	let ddragonVersion: string;
-	let summonerSpellData: any;
-	let matches: any | null = null;
+	let matches: CustomMatchDto[] | null = null;
+	let summonerIcon: string | null = null;
 
 	onMount(() => {
-		getDdragonVersion().then((v) => {
-			ddragonVersion = v;
-
-			getSummonerSpellData(ddragonVersion).then((d) => {
-				summonerSpellData = d;
-			});
+		getSummonerIcon(data.data.summonerData.profileIconId).then((icon) => {
+			summonerIcon = icon;
 		});
 
 		data.data.matches.then((m: any) => {
 			matches = m;
 		});
 	});
-
-	async function getDdragonVersion() {
-		return (await (await fetch('https://ddragon.leagueoflegends.com/api/versions.json')).json())[0];
-	}
-
-	async function getSummonerSpellData(ddragonVersion: string) {
-		return await (
-			await fetch(
-				`https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/data/en_US/summoner.json`
-			)
-		).json();
-	}
-
-	async function getSummonerSpellIcon(summonerSpellId: string) {
-		for (const summonerSpell in summonerSpellData.data) {
-			if (summonerSpellData.data[summonerSpell].key == summonerSpellId) {
-				const ret = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/spell/${summonerSpellData.data[summonerSpell].image.full}`;
-				return ret;
-			}
-		}
-	}
-
-	console.log(data);
 </script>
 
 {#if data.data.summonerData}
 	<title>{data.data.summonerData.name} - PENTAKILL.LOL</title>
 {/if}
 
-<main class="flex justify-center font-spiegel min-h-[calc(100vh-64px)]">
-	<div class="w-[800px] flex flex-col mx-16 my-8 rounded-xl border border-league-grey-2">
-		<div class="p-4 flex flex-row gap-8">
-			<div class="w-32 h-32">
-				{#await getSummonerIcon(data.data.summonerData.profileIconId) then icon}
-					<div class="rounded-3xl overflow-hidden">
-						<img src={icon} alt="Summoner Icon" class="w-full h-full" />
-					</div>
-					<div class="absolute -translate-y-1/2 w-32 h-6 flex items-center justify-center">
-						<span
-							class="px-2 bg-gradient-to-r from-league-blue-4 to-league-blue-2 text-league-hextech-black text-lg font-bold rounded-full border-4 border-league-hextech-black"
+{#if $storesInitialized}
+	<main class="flex justify-center font-spiegel min-h-[calc(100vh-64px)]">
+		<div class="w-[800px] flex flex-col my-8 rounded-xl border border-league-grey-2">
+			<div class="p-4 flex flex-row gap-8">
+				<div class="w-32 h-32">
+					{#if summonerIcon}
+						<div
+							class="rounded-full overflow-hidden bg-gradient-to-t from-league-gold-5 to-league-gold-4"
 						>
-							{data.data.summonerData.summonerLevel}
-						</span>
-					</div>
-				{/await}
-			</div>
-
-			<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
-				{data.data.summonerData.name}
-			</h1>
-		</div>
-		<hr class="mt-4 border-league-grey-2" />
-		<div class="p-4 flex-grow">
-			{#if matches}
-				<div class="flex flex-col gap-2">
-					{#each matches as match}
-						<div class="h-32 flex rounded-xl overflow-hidden">
-							<div
-								class="w-full p-2 {match.currentSummoner.win ? 'bg-league-blue-5' : 'bg-[#5c2029]'}"
-							>
-								<div class="flex flex-col">
-									<div class="flex gap-1 h-16">
-										<div class="w-16 h-16 rounded-md overflow-hidden opacity-100">
-											{#if ddragonVersion !== undefined}
-												<img
-													src="http://ddragon.leagueoflegends.com/cdn/{ddragonVersion}/img/champion/{match
-														.currentSummoner.championName}.png"
-													alt={match.currentSummoner.championName}
-													class="scale-125"
-												/>
-											{/if}
-										</div>
-
-										<div class="flex flex-col gap-1 justify-center">
-											{#if ddragonVersion !== undefined && summonerSpellData !== undefined}
-												{#await getSummonerSpellIcon(match.currentSummoner.summoner1Id) then spell1Icon}
-													<img
-														src={spell1Icon}
-														alt="Summoner Spell 1"
-														class="w-[30px] aspect-square rounded-md"
-													/>
-												{/await}
-												{#await getSummonerSpellIcon(match.currentSummoner.summoner2Id) then spell2Icon}
-													<img
-														src={spell2Icon}
-														alt="Summoner Spell 2"
-														class="w-[30px] aspect-square rounded-md"
-													/>
-												{/await}
-											{/if}
-										</div>
-									</div>
-
-									<div class="text-lg font-bold text-league-gold-1">
-										<span>{match.currentSummoner.kills}</span>
-										<span class="text-league-grey-1.5">/</span>
-										<span class="text-red-600">{match.currentSummoner.deaths}</span>
-										<span class="text-league-grey-1.5">/</span>
-										<span>{match.currentSummoner.assists}</span>
-									</div>
-									<span class="text-league-grey-1"
-										>{(
-											(match.currentSummoner.kills + match.currentSummoner.assists) /
-											Math.max(match.currentSummoner.deaths, 1)
-										).toFixed(2)} KDA</span
-									>
-								</div>
+							<div class="p-1">
+								<img src={summonerIcon} alt="Summoner Icon" class="rounded-full" />
 							</div>
 						</div>
-					{/each}
+						<div class="absolute -translate-y-1/2 w-32 h-6 flex items-center justify-center">
+							<span
+								class="px-2 bg-gradient-to-r from-league-blue-4 to-league-blue-2 text-league-hextech-black text-lg font-bold rounded-full border-4 border-league-hextech-black"
+							>
+								{data.data.summonerData.summonerLevel}
+							</span>
+						</div>
+					{/if}
 				</div>
-			{:else}
-				<div class="h-full flex justify-center items-center pl-8">
-					<svg
-						aria-hidden="true"
-						class="w-16 h-16 animate-spin text-league-blue-7 fill-league-blue-3"
-						viewBox="0 0 100 101"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-							fill="currentColor"
-						/>
-						<path
-							d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-							fill="currentFill"
-						/>
-					</svg>
-					<span class="sr-only">Loading...</span>
-				</div>
-			{/if}
+
+				<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
+					{data.data.summonerData.name}
+				</h1>
+			</div>
+			<hr class="mt-4 border-league-grey-2" />
+			<div class="p-4 flex-grow">
+				{#if matches}
+					<div class="flex flex-col gap-4">
+						{#each matches as match, i}
+							<MatchHistoryItem {match} />
+							{#if i < matches.length - 1}
+								<hr class="border-league-grey-3" />
+							{/if}
+						{/each}
+					</div>
+				{:else}
+					<div class="h-full flex justify-center items-center pl-8">
+						<svg
+							aria-hidden="true"
+							class="w-16 h-16 animate-spin text-league-blue-7 fill-league-blue-3"
+							viewBox="0 0 100 101"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+								fill="currentColor"
+							/>
+							<path
+								d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+								fill="currentFill"
+							/>
+						</svg>
+						<span class="sr-only">Loading...</span>
+					</div>
+				{/if}
+			</div>
 		</div>
-	</div>
-</main>
+	</main>
+{/if}

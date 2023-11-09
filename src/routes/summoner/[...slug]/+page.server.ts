@@ -1,5 +1,5 @@
 import getRegion from '$lib/getRegion.js';
-import { isRiotStatusCode, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
+import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { error, redirect } from '@sveltejs/kit';
 
 let RIOT_API_KEY: string | undefined;
@@ -96,5 +96,3 @@ async function getMatchData(region: string, matchId: string, summonerData: any) 
 	});
 	return matchData;
 }
-
-type CustomMatchDto = MatchDto & { currentSummoner: ParticipantDto };
