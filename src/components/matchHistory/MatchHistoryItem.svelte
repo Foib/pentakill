@@ -1,5 +1,5 @@
 <script lang="ts">
-	import getItemIcon from '$lib/getItemIcon';
+	import getMapName from '$lib/getMapName';
 	import getQueueName from '$lib/getQueueName';
 	import getRuneIcon from '$lib/getRuneIcon';
 	import getSummonerSpellIcon from '$lib/getSummonerSpellIcon';
@@ -9,8 +9,15 @@
 
 	export let match: CustomMatchDto;
 
+	console.log(match);
+
 	function convertNumberToItemIndex(num: number) {
 		return num as 0 | 1 | 2 | 3 | 4 | 5 | 6;
+	}
+
+	function formatGameDuration(duration: number) {
+		duration = duration / 60;
+		return Math.floor(duration) + ':' + Math.round((((duration * 10) % 10) / 10) * 60);
 	}
 </script>
 
@@ -58,26 +65,50 @@
 							<img src={spell2Icon} alt="Summoner Spell 2" class="h-6" />
 						{/await}
 					</div>
-					{#await getRuneIcon(match.currentSummoner.perks.styles[0].style) then rune1Icon}
-						<img src={rune1Icon} alt="Rune 1" class="h-[26px] bg-league-grey-3 p-1 rounded-full" />
+					{#await getRuneIcon(match.currentSummoner.perks.styles[0].selections[0].perk) then rune1Icon}
+						<img src={rune1Icon} alt="Rune 1" class="h-[26px]" />
 					{/await}
 					{#await getRuneIcon(match.currentSummoner.perks.styles[1].style) then rune2Icon}
-						<img src={rune2Icon} alt="Rune 2" class="h-[26px] bg-league-grey-3 p-1 rounded-full" />
+						<img src={rune2Icon} alt="Rune 2" class="h-[26px]" />
 					{/await}
 				</div>
 			</div>
 		</div>
 
 		<!-- Items, KDA, CS -->
-		<div class="w-full h-full flex flex-col flex-grow">
+		<div class="w-full h-full flex flex-col">
 			<div class="flex border border-league-gold-5">
 				{#each { length: 7 } as _, i}
 					<ItemBar {match} itemIndex={convertNumberToItemIndex(i)} />
 				{/each}
 			</div>
-			<div />
+			<div class="flex justify-between mt-auto font-beaufort font-bold text-lg text-league-grey-1">
+				<div>
+					<span>
+						{match.currentSummoner.kills} / {match.currentSummoner.deaths} / {match.currentSummoner
+							.assists}
+					</span>
+				</div>
+				<span>{match.currentSummoner.totalMinionsKilled} CS</span>
+				<span>{match.currentSummoner.goldEarned.toLocaleString('en-US')}g</span>
+			</div>
 		</div>
-		<div class="w-full h-full" />
+
+		<!-- Map name, game duration, game date -->
+		<div class="w-full h-full text-left font-spiegel text-league-grey-1">
+			<p class="pl-8 mb-2">{getMapName(match.info.mapId)}</p>
+			<p class="pl-8">
+				<span>{formatGameDuration(match.info.gameDuration)}</span>
+				<span class="text-league-grey-2">•</span>
+				<span
+					>{new Date(match.info.gameCreation).toLocaleDateString('en-US', {
+						day: '2-digit',
+						month: '2-digit',
+						year: 'numeric'
+					})}</span
+				>
+			</p>
+		</div>
 	</button>
 {:else}
 	<div class="h-32 flex rounded-xl overflow-hidden">

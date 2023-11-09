@@ -1,4 +1,5 @@
 import getDdragonVersion from '$lib/getDdragonVersion';
+import getMapsData from '$lib/getMapsData';
 import getQueues from '$lib/getQueues';
 import getRunesData from '$lib/getRunesData';
 import getSummonerSpellData from '$lib/getSummonerSpellData';
@@ -7,10 +8,19 @@ import {
 	summonerSpellDataStore,
 	queuesStore,
 	storesInitialized,
-	runesDataStore
+	runesDataStore,
+	mapsDataStore
 } from '../stores';
 
 export function load() {
+	getQueues().then((queues) => {
+		queuesStore.set(queues);
+	});
+
+	getMapsData().then((mapsData) => {
+		mapsDataStore.set(mapsData);
+	});
+
 	getDdragonVersion().then((ddragonVersion) => {
 		ddragonVersionStore.set(ddragonVersion);
 
@@ -20,12 +30,8 @@ export function load() {
 			getRunesData(ddragonVersion).then((runesData) => {
 				runesDataStore.set(runesData);
 
-				getQueues().then((queues) => {
-					queuesStore.set(queues);
-
-					storesInitialized.set(true);
-					console.log('Stores initialized');
-				});
+				storesInitialized.set(true);
+				console.log('Stores initialized');
 			});
 		});
 	});

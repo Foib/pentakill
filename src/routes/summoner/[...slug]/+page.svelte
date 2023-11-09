@@ -2,12 +2,7 @@
 	import getSummonerIcon from '$lib/getSummonerIcon.js';
 	import type { CustomMatchDto } from '$lib/riotTypes/Misc.js';
 	import { onMount } from 'svelte';
-	import {
-		ddragonVersionStore,
-		storesInitialized,
-		summonerSpellDataStore
-	} from '../../../stores.js';
-	import getSummonerSpellIcon from '$lib/getSummonerSpellIcon.js';
+	import { storesInitialized } from '../../../stores.js';
 	import MatchHistoryItem from '../../../components/matchHistory/MatchHistoryItem.svelte';
 
 	export let data;
