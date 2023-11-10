@@ -95,7 +95,9 @@
 							.assists}
 					</span>
 				</div>
-				<span>{match.currentSummoner.totalMinionsKilled} CS</span>
+				<span
+					>{match.currentSummoner.totalMinionsKilled + match.currentSummoner.neutralMinionsKilled} CS</span
+				>
 				<span>{match.currentSummoner.goldEarned.toLocaleString('en-US')}g</span>
 			</div>
 		</div>
