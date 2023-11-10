@@ -6,3 +6,22 @@
 :root {
 	color-scheme: dark;
 }
+
+* {
+	scrollbar-width: auto;
+	scrollbar-color: #785a28 #010a13;
+}
+
+*::-webkit-scrollbar {
+	width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #010a13;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #785a28;
+	border-radius: 6px;
+	border: 4px solid #010a13;
+}
