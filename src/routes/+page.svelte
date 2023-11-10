@@ -1,5 +1,5 @@
 <script lang="ts">
-	import getRegion from '$lib/getRegion';
+	import { onMount } from 'svelte';
 
 	let region = 'NA';
 	let summonerName = '';
@@ -23,6 +23,13 @@
 		'TH'
 	];
 
+	onMount(() => {
+		let localStorageRegion = localStorage.getItem('region') ?? 'NA';
+		if (regions.includes(localStorageRegion)) {
+			region = localStorageRegion;
+		}
+	});
+
 	function redirectToSummoner() {
 		if (summonerName !== '') {
 			window.location.href = `summoner/${region.toLowerCase()}/${summonerName}`;
@@ -37,6 +44,9 @@
 		<select
 			class="pl-4 bg-transparent text-league-gold-4 cursor-pointer outline-none"
 			bind:value={region}
+			on:change={() => {
+				localStorage.setItem('region', region);
+			}}
 		>
 			{#each regions as r}
 				<option class="text-league-gold-1 bg-league-hextech-black">{r}</option>
