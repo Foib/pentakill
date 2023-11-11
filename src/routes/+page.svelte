@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import SocialMediaMetaTags from '../components/SocialMediaMetaTags.svelte';
 
 	let region = 'NA';
 	let summonerName = '';
@@ -24,6 +25,8 @@
 	];
 
 	onMount(() => {
+		document.title = 'PENTAKILL.LOL';
+
 		let localStorageRegion = localStorage.getItem('region') ?? 'NA';
 		if (regions.includes(localStorageRegion)) {
 			region = localStorageRegion;
@@ -36,6 +39,8 @@
 		}
 	}
 </script>
+
+<SocialMediaMetaTags />
 
 <main class="w-full h-[calc(100vh-64px)] flex justify-center items-center">
 	<div

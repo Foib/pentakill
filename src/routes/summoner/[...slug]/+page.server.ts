@@ -1,4 +1,5 @@
 import getRegion from '$lib/getRegion.js';
+import getSummonerIcon from '$lib/getSummonerIcon.js';
 import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -15,19 +16,25 @@ export const load = async ({ params }) => {
 	const region = getRegion(slugArr[0]);
 	const username = slugArr[1];
 
+	let summonerIconUrl: string;
+
 	if (!region || !username) {
 		throw error(404, 'Not Found');
 	}
 
-	const data = await getSummonerData(region[0], username).then((summonerData) => {
+	const data = await getSummonerData(region[0], username).then(async (summonerData) => {
 		if (isRiotStatusCode(summonerData)) {
 			throw error(404, 'Not Found');
 		}
 
+		await getSummonerIcon(summonerData.profileIconId).then((icon) => {
+			summonerIconUrl = icon;
+		});
+
 		return getRankData(region[0], summonerData.id).then((rankData) => {
 			checkIfStatusIsError(rankData);
 
-			return getMatchIds(region[1], summonerData.puuid).then((matchData) => {
+			return getMatchIds(region[1], summonerData.puuid).then(async (matchData) => {
 				checkIfStatusIsError(matchData);
 
 				let matchPromises: Promise<CustomMatchDto>[] = [];
@@ -36,9 +43,11 @@ export const load = async ({ params }) => {
 				});
 
 				return {
+					region: slugArr[0],
+					summonerIconUrl,
 					summonerData,
 					rankData,
-					matches: Promise.all(matchPromises)
+					matches: await Promise.all(matchPromises)
 				};
 			});
 		});

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import SocialMediaMetaTags from '../../components/SocialMediaMetaTags.svelte';
 
 	let region = 'NA';
 	let summonerName = '';
@@ -37,6 +38,8 @@
 		region: string;
 	};
 </script>
+
+<SocialMediaMetaTags />
 
 <main class="w-full h-[calc(100vh-64px)] flex justify-center items-center">
 	<div class="w-[500px]">

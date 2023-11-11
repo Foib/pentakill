@@ -4,48 +4,44 @@
 	import { onMount } from 'svelte';
 	import { storesInitialized } from '../../../stores.js';
 	import MatchHistoryItem from '../../../components/matchHistory/MatchHistoryItem.svelte';
+	import SocialMediaMetaTags from '../../../components/SocialMediaMetaTags.svelte';
 
 	export let data;
 
 	let matches: CustomMatchDto[] | null = null;
-	let summonerIcon: string | null = null;
 
 	onMount(() => {
-		getSummonerIcon(data.data.summonerData.profileIconId).then((icon) => {
-			summonerIcon = icon;
-		});
-
-		data.data.matches.then((m: any) => {
-			matches = m;
-		});
+		matches = data.data.matches;
+		document.title = `${data.data.summonerData.name} - PENTAKILL.LOL`;
 	});
 </script>
 
-{#if data.data.summonerData}
-	<title>{data.data.summonerData.name} - PENTAKILL.LOL</title>
-{/if}
+<SocialMediaMetaTags
+	title={`${data.data.summonerData.name} - PENTAKILL.LOL`}
+	description={`${data.data.summonerData.name} | Level ${data.data.summonerData.summonerLevel}`}
+	url={`https://www.pentakill.lol/summoner/${data.data.region}/${data.data.summonerData.name}`}
+	image={data.data.summonerIconUrl}
+/>
 
 {#if $storesInitialized}
 	<main class="flex justify-center font-spiegel min-h-[calc(100vh-64px)]">
 		<div class="w-[800px] flex flex-col my-8 rounded-xl border border-league-grey-2">
 			<div class="p-4 flex flex-row gap-8">
 				<div class="w-32 h-32">
-					{#if summonerIcon}
-						<div
-							class="rounded-full overflow-hidden bg-gradient-to-t from-league-gold-5 to-league-gold-4"
+					<div
+						class="rounded-full overflow-hidden bg-gradient-to-t from-league-gold-5 to-league-gold-4"
+					>
+						<div class="p-1">
+							<img src={data.data.summonerIconUrl} alt="Summoner Icon" class="rounded-full" />
+						</div>
+					</div>
+					<div class="absolute -translate-y-1/2 w-32 h-6 flex items-center justify-center">
+						<span
+							class="px-2 bg-gradient-to-r from-league-blue-4 to-league-blue-2 text-league-hextech-black text-lg font-bold rounded-full border-4 border-league-hextech-black"
 						>
-							<div class="p-1">
-								<img src={summonerIcon} alt="Summoner Icon" class="rounded-full" />
-							</div>
-						</div>
-						<div class="absolute -translate-y-1/2 w-32 h-6 flex items-center justify-center">
-							<span
-								class="px-2 bg-gradient-to-r from-league-blue-4 to-league-blue-2 text-league-hextech-black text-lg font-bold rounded-full border-4 border-league-hextech-black"
-							>
-								{data.data.summonerData.summonerLevel}
-							</span>
-						</div>
-					{/if}
+							{data.data.summonerData.summonerLevel}
+						</span>
+					</div>
 				</div>
 
 				<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
