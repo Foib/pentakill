@@ -18,7 +18,7 @@ export const load = async ({ params }) => {
 
 	let summonerIconUrl: string;
 
-	if (!region || !username) {
+	if (region[0] === '' || !username) {
 		throw error(404, 'Not Found');
 	}
 
@@ -32,10 +32,10 @@ export const load = async ({ params }) => {
 		});
 
 		return getRankData(region[0], summonerData.id).then((rankData) => {
-			checkIfStatusIsError(rankData);
+			isRiotStatusCode(rankData);
 
 			return getMatchIds(region[1], summonerData.puuid).then(async (matchData) => {
-				checkIfStatusIsError(matchData);
+				isRiotStatusCode(matchData);
 
 				let matchPromises: Promise<CustomMatchDto>[] = [];
 				matchData.forEach((matchId: string) => {
@@ -62,12 +62,6 @@ export const load = async ({ params }) => {
 		};
 	}
 };
-
-function checkIfStatusIsError(data: any) {
-	if (data.status?.status_code === 404) {
-		throw error(404, 'Not Found');
-	}
-}
 
 async function getSummonerData(region: string, username: string) {
 	const summonerDataJson = await fetch(

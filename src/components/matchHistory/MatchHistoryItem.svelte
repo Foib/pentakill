@@ -9,8 +9,6 @@
 
 	export let match: CustomMatchDto;
 
-	console.log(match);
-
 	function convertNumberToItemIndex(num: number) {
 		return num as 0 | 1 | 2 | 3 | 4 | 5 | 6;
 	}
@@ -33,11 +31,21 @@
 		<div class="h-full rounded-full overflow-hidden border-2 border-league-gold-5">
 			{#if $ddragonVersionStore !== undefined}
 				<img
-					src="http://ddragon.leagueoflegends.com/cdn/{$ddragonVersionStore}/img/champion/{match
+					src="https://ddragon.leagueoflegends.com/cdn/{$ddragonVersionStore}/img/champion/{match
 						.currentSummoner.championName}.png"
 					alt={match.currentSummoner.championName}
 					class="w-full h-full scale-[1.15]"
 				/>
+			{/if}
+			{#if match.currentSummoner.teamPosition !== ''}
+				<div
+					class="flex items-center justify-center absolute -translate-x-1 -translate-y-5 w-6 h-6 p-[2px] rounded-full border border-league-gold-4 bg-league-hextech-black overflow-hidden"
+				>
+					<img
+						src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{match.currentSummoner.teamPosition.toLowerCase()}.png"
+						alt="Position"
+					/>
+				</div>
 			{/if}
 			<div
 				class="flex items-center justify-center absolute translate-x-14 -translate-y-5 w-6 h-6 rounded-full border border-league-gold-4 bg-league-hextech-black overflow-hidden"
