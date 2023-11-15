@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SocialMediaMetaTags from '../../components/SocialMediaMetaTags.svelte';
+	import getSummonerIcon from '$lib/getSummonerIcon';
 
 	let region = 'NA';
 	let summonerName = '';
@@ -33,9 +34,39 @@
 
 	let users: User[] = [];
 
+	function addUser() {
+		if (
+			!(
+				summonerName === '' ||
+				users.find(
+					(u) => u.name.toLowerCase() === summonerName.toLowerCase() && u.region === region
+				)
+			)
+		) {
+			fetch(`./leaderboard/api?region=${region}&username=${summonerName}`).then((res) =>
+				res.json().then((d) => {
+					console.log(d);
+					if (d.status === 200) {
+						getSummonerIcon(d.summonerData.profileIconId).then((icon) => {
+							const newUser = {
+								name: d.summonerData.name,
+								region,
+								icon
+							} as User;
+							users = [...users, newUser];
+						});
+					}
+				})
+			);
+		}
+
+		summonerName = '';
+	}
+
 	type User = {
 		name: string;
 		region: string;
+		icon: string;
 	};
 </script>
 
@@ -64,34 +95,45 @@
 				bind:value={summonerName}
 				on:keypress={(e) => {
 					if (e.key === 'Enter') {
-						users = [...users, { name: summonerName, region }];
-						summonerName = '';
+						addUser();
 					}
 				}}
 			/>
 			<button
 				class="w-16 pr-4 flex justify-center items-center text-league-gold-4 hover:text-league-gold-1 outline-none transition-all"
 				on:click={() => {
-					users = [...users, { name: summonerName, region }];
-					summonerName = '';
+					addUser();
 				}}
 			>
 				<span class="material-symbols-outlined"> add </span>
 			</button>
 		</div>
-		<div class="h-[500px] border border-t-0 border-league-grey-2 rounded-b-[2rem] overflow-hidden">
+		<div class="h-[401px] border border-t-0 border-league-grey-2 rounded-b-[2rem] overflow-hidden">
 			<div class="w-full h-full overflow-x-hidden overflow-y-auto">
 				<div>
 					{#each users as user, i}
 						<div
-							class="h-20 px-4 flex items-center font-beaufort text-2xl bg-white {i % 2 == 0
+							class="h-20 px-4 flex items-center gap-4 font-beaufort text-2xl bg-white {i % 2 == 0
 								? 'bg-opacity-0'
 								: 'bg-opacity-[0.01]'}"
 						>
-							<div>
+							<div
+								class="w-16 aspect-square rounded-full overflow-hidden m-2 border-2 border-league-gold-4"
+							>
+								<img src={user.icon} alt="Summoner Icon" class="w-full h-full" />
+							</div>
+							<div class="w-full">
 								<span class="text-league-gold-1">{user.name}</span>
 								<span class="text-league-gold-4"> ({user.region})</span>
 							</div>
+							<button
+								class="flex items-center p-2 rounded-full bg-transparent hover:bg-league-blue-7 text-league-gold-4 hover:text-league-gold-1 transition-all"
+								on:click={() => {
+									users = users.filter((u) => u.name !== user.name);
+								}}
+							>
+								<span class="material-symbols-outlined"> close </span>
+							</button>
 						</div>
 					{/each}
 				</div>
@@ -99,7 +141,22 @@
 		</div>
 		<button
 			class="w-2/3 h-12 -translate-y-[1px] mx-auto flex justify-center items-center border border-league-gold-5 hover:border-league-gold-1 text-league-gold-4 hover:text-league-gold-1 font-beaufort text-2xl rounded-b-3xl outline-none transition-all"
-			>Create Leaderboard</button
+			on:click={() => {
+				let regionUsersObject = new Map();
+				users.forEach((u) => {
+					if (regionUsersObject.has(u.region)) {
+						regionUsersObject.set(u.region, [...regionUsersObject.get(u.region), u.name]);
+					} else {
+						regionUsersObject.set(u.region, [u.name]);
+					}
+				});
+
+				//create leaderboard url (e.g. /leaderboard/NA=summoner1,summoner2&EUW=summoner3summoner4)
+
+				window.location.href = `/leaderboard/${Array.from(regionUsersObject.entries())
+					.map((e) => `${e[0]}=${e[1].join(',')}`)
+					.join('&')}`;
+			}}>Create Leaderboard</button
 		>
 		<p class="mt-4 text-center font-spiegel text-league-grey-2">Not working yet!</p>
 	</div>

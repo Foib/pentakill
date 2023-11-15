@@ -28,7 +28,7 @@
 <button class="h-20 flex gap-2">
 	<div class="flex w-full h-full gap-8">
 		<!-- Champion Icon and Level -->
-		<div class="h-full rounded-full overflow-hidden border-2 border-league-gold-5">
+		<div class="h-full aspect-square rounded-full overflow-hidden border-2 border-league-gold-5">
 			{#if $ddragonVersionStore !== undefined}
 				<img
 					src="https://ddragon.leagueoflegends.com/cdn/{$ddragonVersionStore}/img/champion/{match
@@ -36,7 +36,10 @@
 					alt={match.currentSummoner.championName}
 					class="w-full h-full scale-[1.15]"
 				/>
+			{:else}
+				<div class="w-full h-full animate-pulse bg-league-blue-7" />
 			{/if}
+
 			{#if match.currentSummoner.teamPosition !== ''}
 				<div
 					class="flex items-center justify-center absolute -translate-x-1 -translate-y-5 w-6 h-6 p-[2px] rounded-full border border-league-gold-4 bg-league-hextech-black overflow-hidden"
