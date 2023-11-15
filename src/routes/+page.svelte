@@ -27,9 +27,13 @@
 	onMount(() => {
 		document.title = 'PENTAKILL.LOL';
 
-		let localStorageRegion = localStorage.getItem('region') ?? 'NA';
-		if (regions.includes(localStorageRegion)) {
-			region = localStorageRegion;
+		if (!localStorage) {
+			region = 'NA';
+		} else {
+			let localStorageRegion = localStorage.getItem('region') ?? 'NA';
+			if (regions.includes(localStorageRegion)) {
+				region = localStorageRegion;
+			}
 		}
 	});
 
