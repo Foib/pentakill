@@ -72,7 +72,7 @@
 
 <SocialMediaMetaTags />
 
-<main class="w-full h-[calc(100vh-64px)] flex justify-center items-center">
+<main class="w-full h-[--main-height] flex justify-center items-center">
 	<div class="w-[500px]">
 		<div
 			class="h-16 flex gap-4 border border-league-gold-5 focus-within:border-league-gold-1 rounded-t-[2rem] overflow-hidden font-spiegel transition-all"

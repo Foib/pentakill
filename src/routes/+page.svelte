@@ -70,8 +70,11 @@
 
 <SocialMediaMetaTags />
 
-<main class="w-full h-[calc(100vh-64px)] flex justify-center">
-	<div class="group mt-[40%] font-spiegel">
+<main class="w-full h-[--main-height] flex justify-center">
+	<div
+		class="group mb-auto font-spiegel"
+		style="margin-top: calc(calc(var(--main-height) / 2) - 2rem);"
+	>
 		<div
 			class="w-[500px] h-16 flex gap-4 border border-league-gold-5 focus-within:border-league-gold-1 rounded-[2rem] {recent.length >
 			0

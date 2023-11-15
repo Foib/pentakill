@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="w-full h-[calc(100vh-64px)] flex flex-col justify-center items-center bg-gradient-to-r from-league-gold-5 to-league-gold-4 bg-clip-text text-transparent"
+	class="w-full h-[--main-height] flex flex-col justify-center items-center bg-gradient-to-r from-league-gold-5 to-league-gold-4 bg-clip-text text-transparent"
 >
 	<h1 id="error-headline" class="font-beaufort font-bold break-keep whitespace-nowrap">
 		Something went wrong!

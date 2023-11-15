@@ -43,7 +43,7 @@
 />
 
 {#if $storesInitialized}
-	<main class="flex justify-center font-spiegel min-h-[calc(100vh-64px)]">
+	<main class="flex justify-center font-spiegel min-h-[--main-height]">
 		<div class="w-[800px] flex flex-col my-8 rounded-xl border border-league-grey-2">
 			<div class="p-4 flex flex-row gap-8">
 				<div class="w-32 h-32">
