@@ -24,18 +24,17 @@
 		'TH'
 	];
 
-	let recent: RecentSummoner[] = JSON.parse(localStorage.getItem('recent') ?? '[]');
+	let recent: RecentSummoner[] = [];
 
 	onMount(() => {
 		document.title = 'PENTAKILL.LOL';
 
-		if (!localStorage) {
-			region = 'NA';
-		} else {
-			let localStorageRegion = localStorage.getItem('region') ?? 'NA';
-			if (regions.includes(localStorageRegion)) {
-				region = localStorageRegion;
-			}
+		let localStorageRecent = localStorage.getItem('recent') ?? '[]';
+		recent = JSON.parse(localStorageRecent);
+
+		let localStorageRegion = localStorage.getItem('region') ?? 'NA';
+		if (regions.includes(localStorageRegion)) {
+			region = localStorageRegion;
 		}
 	});
 
