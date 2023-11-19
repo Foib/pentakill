@@ -11,6 +11,8 @@ export default function getQueueName(queueId: number) {
 				return 'Ranked Flex';
 			case 450:
 				return 'ARAM';
+			case 490:
+				return 'Quickplay';
 			default:
 				return 'Unknown';
 		}
