@@ -63,9 +63,15 @@
 					</div>
 				</div>
 
-				<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
-					{data.data.summonerData.name}
-				</h1>
+				<div class="py-4">
+					<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
+						{data.data.riotAccountData.gameName}
+						<span class="text-league-grey-2">#{data.data.riotAccountData.tagLine}</span>
+					</h1>
+					<p class="text-xl text-league-grey-2 font-spiegel mt-2">
+						Prev. {data.data.summonerData.name}
+					</p>
+				</div>
 			</div>
 			<hr class="mt-4 border-league-grey-2" />
 			<div class="p-4 flex-grow">

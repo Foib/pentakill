@@ -120,6 +120,7 @@
 				{#each recent as r, i}
 					<div class="w-full flex gap-4 hover:bg-league-blue-7">
 						<a
+							data-sveltekit-preload-data="off"
 							href={`summoner/${r.region.toLowerCase()}/${r.name.split('#', 2)[0]}-${
 								r.name.split('#', 2)[1]
 							}`}

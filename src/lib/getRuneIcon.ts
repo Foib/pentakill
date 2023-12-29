@@ -6,6 +6,8 @@ const baseUrl = 'https://ddragon.leagueoflegends.com/cdn/img/';
 export default function getRuneIcon(runeId: number) {
 	let path = '';
 
+	console.log(runeId);
+
 	get(runesDataStore).forEach((runePath) => {
 		if (runePath.id == runeId) {
 			path = baseUrl + runePath.icon;

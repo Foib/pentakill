@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { ddragonVersionStore, summonerSpellDataStore } from '../stores';
 
-export default async function getSummonerSpellIcon(summonerSpellId: number) {
+export default function getSummonerSpellIcon(summonerSpellId: number) {
 	const ddragonVersion = get(ddragonVersionStore);
 	const summonerSpellData = get(summonerSpellDataStore);
 

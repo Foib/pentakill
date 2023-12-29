@@ -75,19 +75,31 @@
 			</p>
 			<div class="flex gap-1 mt-auto">
 				<div class="flex border border-league-gold-5">
-					{#await getSummonerSpellIcon(match.currentSummoner.summoner1Id) then spell1Icon}
-						<img src={spell1Icon} alt="Summoner Spell 1" class="h-6" />
-					{/await}
-					{#await getSummonerSpellIcon(match.currentSummoner.summoner2Id) then spell2Icon}
-						<img src={spell2Icon} alt="Summoner Spell 2" class="h-6" />
-					{/await}
+					<img
+						src={getSummonerSpellIcon(match.currentSummoner.summoner1Id)}
+						alt="Summoner Spell 1"
+						class="h-6"
+					/>
+					<img
+						src={getSummonerSpellIcon(match.currentSummoner.summoner2Id)}
+						alt="Summoner Spell 2"
+						class="h-6"
+					/>
 				</div>
-				{#await getRuneIcon(match.currentSummoner.perks.styles[0].selections[0].perk) then rune1Icon}
-					<img src={rune1Icon} alt="Rune 1" class="h-[26px]" />
-				{/await}
-				{#await getRuneIcon(match.currentSummoner.perks.styles[1].style) then rune2Icon}
-					<img src={rune2Icon} alt="Rune 2" class="h-[26px]" />
-				{/await}
+				{#if match.currentSummoner.perks.styles[0].selections[0].perk !== 0}
+					<img
+						src={getRuneIcon(match.currentSummoner.perks.styles[0].selections[0].perk)}
+						alt="Rune 1"
+						class="h-[26px] aspect-square"
+					/>
+				{/if}
+				{#if match.currentSummoner.perks.styles[1].style !== 0}
+					<img
+						src={getRuneIcon(match.currentSummoner.perks.styles[1].style)}
+						alt="Rune 2"
+						class="h-[26px] aspect-square"
+					/>
+				{/if}
 			</div>
 		</div>
 	</div>

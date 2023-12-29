@@ -25,7 +25,8 @@ export const load = async ({ params }) => {
 		throw error(404, 'Not Found');
 	}
 
-	const data = await getSummonerData(region[0], (await getRiotAccount(username, tag)).puuid).then(
+	const riotAccountData = await getRiotAccount(username, tag);
+	const data = await getSummonerData(region[0], riotAccountData.puuid).then(
 		async (summonerData) => {
 			if (isRiotStatusCode(summonerData)) {
 				console.log(summonerData);
@@ -50,6 +51,7 @@ export const load = async ({ params }) => {
 					return {
 						region: slugArr[0],
 						summonerIconUrl,
+						riotAccountData,
 						summonerData,
 						rankData,
 						matches: await Promise.all(matchPromises)

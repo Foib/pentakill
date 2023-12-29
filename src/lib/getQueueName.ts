@@ -65,7 +65,7 @@ export default function getQueueName(queueId: number) {
 			return 'Nexus Blitz';
 		} else if (queueId === 1400) {
 			return 'Ultimate Spellbook';
-		} else if (queueId === 1700) {
+		} else if (queueId === 1700 || queueId === 1710) {
 			return 'Arena';
 		} else {
 			return 'Unknown';
