@@ -28,7 +28,9 @@
 <button class="h-20 flex gap-2">
 	<div class="flex w-full h-full gap-8">
 		<!-- Champion Icon and Level -->
-		<div class="h-full aspect-square rounded-full overflow-hidden border-2 border-league-gold-5">
+		<div
+			class="h-full flex-shrink-0 aspect-square rounded-full overflow-hidden border-2 border-league-gold-5"
+		>
 			{#if $ddragonVersionStore !== undefined}
 				<img
 					src="https://ddragon.leagueoflegends.com/cdn/{$ddragonVersionStore}/img/champion/{match

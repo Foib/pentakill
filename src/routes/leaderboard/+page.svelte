@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import SocialMediaMetaTags from '../../components/SocialMediaMetaTags.svelte';
 	import getSummonerIcon from '$lib/getSummonerIcon';
+	import type { RiotStatusCode } from '$lib/riotTypes/Misc';
 
 	let region = 'NA';
 	let summonerName = '';
@@ -47,13 +48,16 @@
 				res.json().then((d) => {
 					console.log(d);
 					if (d.status === 200) {
-						getSummonerIcon(d.summonerData.profileIconId).then((icon) => {
+						const summonerData: SummonerDto = d.summonerData;
+
+						getSummonerIcon(summonerData.profileIconId).then((icon) => {
 							const newUser = {
-								name: d.summonerData.name,
+								id: summonerData.id,
+								name: summonerData.name,
 								region,
 								icon
 							} as User;
-							users = [...users, newUser];
+							users = [newUser, ...users];
 						});
 					}
 				})
@@ -64,6 +68,7 @@
 	}
 
 	type User = {
+		id: string;
 		name: string;
 		region: string;
 		icon: string;
@@ -142,20 +147,15 @@
 		<button
 			class="w-2/3 h-12 -translate-y-[1px] mx-auto flex justify-center items-center border border-league-gold-5 hover:border-league-gold-1 text-league-gold-4 hover:text-league-gold-1 font-beaufort text-2xl rounded-b-3xl outline-none transition-all"
 			on:click={() => {
-				let regionUsersObject = new Map();
-				users.forEach((u) => {
-					if (regionUsersObject.has(u.region)) {
-						regionUsersObject.set(u.region, [...regionUsersObject.get(u.region), u.name]);
-					} else {
-						regionUsersObject.set(u.region, [u.name]);
+				let str = '';
+				for (let i = 0; i < users.length; i++) {
+					str += `${users[i].region.toLowerCase()},${users[i].id}`;
+					if (i !== users.length - 1) {
+						str += ';';
 					}
-				});
+				}
 
-				//create leaderboard url (e.g. /leaderboard/NA=summoner1,summoner2&EUW=summoner3summoner4)
-
-				window.location.href = `/leaderboard/${Array.from(regionUsersObject.entries())
-					.map((e) => `${e[0]}=${e[1].join(',')}`)
-					.join('&')}`;
+				window.location.href = '/leaderboard/' + str;
 			}}>Create Leaderboard</button
 		>
 		<p class="mt-4 text-center font-spiegel text-league-grey-2">Not working yet!</p>

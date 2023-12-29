@@ -58,7 +58,10 @@
 
 			localStorage.setItem('recent', JSON.stringify(newRecent));
 
-			window.location.href = `summoner/${region.toLowerCase()}/${summonerName}`;
+			const usernameTagArr = summonerName.split('#', 2);
+			window.location.href = `summoner/${region.toLowerCase()}/${usernameTagArr[0]}-${
+				usernameTagArr[1]
+			}`;
 		}
 	}
 
@@ -94,7 +97,7 @@
 			</select>
 			<input
 				type="text"
-				placeholder="Username"
+				placeholder="Username + #TAG"
 				class="w-full bg-transparent text-xl text-league-gold-1 placeholder:text-league-grey-2 outline-none"
 				bind:value={summonerName}
 				on:keypress={(e) => {
@@ -117,7 +120,9 @@
 				{#each recent as r, i}
 					<div class="w-full flex gap-4 hover:bg-league-blue-7">
 						<a
-							href={`summoner/${r.region.toLowerCase()}/${r.name}`}
+							href={`summoner/${r.region.toLowerCase()}/${r.name.split('#', 2)[0]}-${
+								r.name.split('#', 2)[1]
+							}`}
 							class="w-full h-16 flex gap-4 items-center justify-between text-left"
 						>
 							<span class="w-[76px] pl-4 text-league-gold-4">{r.region}</span>

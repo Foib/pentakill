@@ -1,9 +1,19 @@
 <script lang="ts">
 	export let data;
+
+	let summoners = data.summoners;
 </script>
 
 <main class="w-full h-[--main-height] flex justify-center items-center">
-	<table>
+	<ol>
+		{#each summoners as summoner}
+			<li>
+				{summoner.name} - {summoner.summonerLevel}
+			</li>
+		{/each}
+	</ol>
+
+	<!-- <table>
 		<thead>
 			<tr>
 				<th>Region</th>
@@ -20,17 +30,5 @@
 				{/each}
 			{/each}
 		</tbody>
-	</table>
+	</table> -->
 </main>
-
-<style>
-	table {
-		border-collapse: collapse;
-	}
-
-	th,
-	td {
-		border: 1px solid white;
-		padding: 0.5rem;
-	}
-</style>
