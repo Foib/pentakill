@@ -12,20 +12,19 @@ if (process.env.NODE_ENV === 'production') {
 
 export async function GET(event) {
 	const _region = event.url.searchParams.get('region');
-	const username = event.url.searchParams.get('username');
+	const puuid = event.url.searchParams.get('puuid');
 	const startIndex = parseInt(event.url.searchParams.get('startIndex') ?? '0');
 
-	if (!_region || !username) {
+	if (!_region || !puuid) {
 		return json({ message: 'Not Found', status: 404 });
 	}
 
 	const region = getRegion(_region);
-
 	if (region[0] === '') {
 		return json({ message: 'Not Found', status: 404 });
 	}
 
-	const matches = await getSummonerData(region[0], username).then(async (summonerData) => {
+	const matches = await getSummonerData(region[0], puuid).then(async (summonerData) => {
 		if (isRiotStatusCode(summonerData)) {
 			return json({ message: 'Not Found', status: 404 });
 		}
@@ -45,9 +44,9 @@ export async function GET(event) {
 	return json({ matches });
 }
 
-async function getSummonerData(region: string, username: string) {
+async function getSummonerData(region: string, puuid: string) {
 	const summonerDataJson = await fetch(
-		`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}?api_key=${RIOT_API_KEY}`
+		`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${RIOT_API_KEY}`
 	);
 	const summonerData: SummonerDto | RiotStatusCode = await summonerDataJson.json();
 	return summonerData;
@@ -58,6 +57,7 @@ async function getMatchIds(region: string, puuid: string, startIndex: number) {
 		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${startIndex}&count=10&api_key=${RIOT_API_KEY}`
 	);
 	const matchData: string[] = await matchDataJson.json();
+
 	return matchData;
 }
 

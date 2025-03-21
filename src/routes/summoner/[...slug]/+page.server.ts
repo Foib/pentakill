@@ -114,9 +114,3 @@ async function getMatchData(region: string, matchId: string, summonerData: any) 
 	});
 	return matchData;
 }
-
-type AccountDto = {
-	puuid: string;
-	gameName: string;
-	tagLine: string;
-};

@@ -13,7 +13,7 @@
 
 	onMount(() => {
 		matches = data.data.matches;
-		document.title = `${data.data.summonerData.name} - PENTAKILL.LOL`;
+		document.title = `${data.data.riotAccountData.gameName}#${data.data.riotAccountData.tagLine} - PENTAKILL.LOL`;
 	});
 
 	function loadMoreMatches() {
@@ -21,11 +21,15 @@
 
 		const startIndex = matches?.length || 0;
 
+		console.log(startIndex);
+
 		fetch(
-			`./api?region=${data.data.region}&username=${data.data.summonerData.name}&startIndex=${startIndex}`
+			`./api?region=${data.data.region}&puuid=${data.data.summonerData.puuid}&startIndex=${startIndex}`
 		)
 			.then((res) => res.json())
 			.then((d) => {
+				console.log(d);
+
 				if (matches) {
 					matches = [...matches, ...d.matches];
 				}
@@ -36,9 +40,9 @@
 </script>
 
 <SocialMediaMetaTags
-	title={`${data.data.summonerData.name} - PENTAKILL.LOL`}
-	description={`${data.data.summonerData.name} | Level ${data.data.summonerData.summonerLevel}`}
-	url={`https://www.pentakill.lol/summoner/${data.data.region}/${data.data.summonerData.name}`}
+	title={`${data.data.riotAccountData.gameName} - PENTAKILL.LOL`}
+	description={`${data.data.riotAccountData.gameName} | Level ${data.data.summonerData.summonerLevel}`}
+	url={`https://www.pentakill.lol/summoner/${data.data.region}/${data.data.riotAccountData.gameName}-${data.data.riotAccountData.tagLine}`}
 	image={data.data.summonerIconUrl}
 />
 
@@ -63,14 +67,11 @@
 					</div>
 				</div>
 
-				<div class="py-4">
+				<div class="py-2">
 					<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
 						{data.data.riotAccountData.gameName}
 						<span class="text-league-grey-2">#{data.data.riotAccountData.tagLine}</span>
 					</h1>
-					<p class="text-xl text-league-grey-2 font-spiegel mt-2">
-						Prev. {data.data.summonerData.name}
-					</p>
 				</div>
 			</div>
 			<hr class="mt-4 border-league-grey-2" />
