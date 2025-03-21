@@ -1,5 +1,9 @@
-const baseUrl = 'https://ddragon.leagueoflegends.com/cdn/13.22.1/img/item/';
+import { get } from 'svelte/store';
+import { ddragonVersionStore } from '../stores';
+
+const baseUrl = 'https://ddragon.leagueoflegends.com/cdn/';
 
 export default function getItemIcon(itemId: number) {
-	return baseUrl + itemId + '.png';
+	const ddragonVersion = get(ddragonVersionStore);
+	return `${baseUrl}${ddragonVersion}/img/item/${itemId}.png`;
 }

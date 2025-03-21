@@ -24,10 +24,10 @@ export function load() {
 	getDdragonVersion().then((ddragonVersion) => {
 		ddragonVersionStore.set(ddragonVersion);
 
-		getSummonerSpellData(ddragonVersion).then((summonerSpellData) => {
+		getSummonerSpellData().then((summonerSpellData) => {
 			summonerSpellDataStore.set(summonerSpellData);
 
-			getRunesData(ddragonVersion).then((runesData) => {
+			getRunesData().then((runesData) => {
 				runesDataStore.set(runesData);
 
 				storesInitialized.set(true);

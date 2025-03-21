@@ -1,7 +1,7 @@
-export default async function getSummonerIcon(iconId: number) {
-	const version = (
-		await (await fetch('https://ddragon.leagueoflegends.com/api/versions.json')).json()
-	)[0];
+import { get } from 'svelte/store';
+import { ddragonVersionStore } from '../stores';
 
-	return `https://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${iconId}.png`;
+export default async function getSummonerIcon(iconId: number) {
+	const ddragonVersion = get(ddragonVersionStore);
+	return `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/profileicon/${iconId}.png`;
 }
