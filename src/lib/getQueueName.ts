@@ -4,7 +4,7 @@ export default function getQueueName(queueId: number) {
 			case 400:
 				return 'Draft Pick';
 			case 420:
-				return 'Ranked Solo';
+				return 'Ranked Solo/Duo';
 			case 430:
 				return 'Blind Pick';
 			case 440:

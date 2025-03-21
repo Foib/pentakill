@@ -40,8 +40,11 @@
 </script>
 
 <SocialMediaMetaTags
-	title={`${data.data.riotAccountData.gameName} - PENTAKILL.LOL`}
-	description={`${data.data.riotAccountData.gameName} | Level ${data.data.summonerData.summonerLevel}`}
+	description={`${data.data.riotAccountData.gameName}#${
+		data.data.riotAccountData.tagLine
+	} | Level ${data.data.summonerData.summonerLevel} | ${data.data.rankData
+		.map((r) => `${getRankedQueueName(r.queueType)}: ${r.tier} ${r.rank}`)
+		.join(' | ')}`}
 	url={`https://www.pentakill.lol/summoner/${data.data.region}/${data.data.riotAccountData.gameName}-${data.data.riotAccountData.tagLine}`}
 	image={data.data.summonerIconUrl}
 />
