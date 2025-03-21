@@ -1,10 +1,10 @@
 <script lang="ts">
-	import getSummonerIcon from '$lib/getSummonerIcon.js';
 	import type { CustomMatchDto } from '$lib/riotTypes/Misc.js';
 	import { onMount } from 'svelte';
 	import { storesInitialized } from '../../../stores.js';
 	import MatchHistoryItem from '../../../components/matchHistory/MatchHistoryItem.svelte';
 	import SocialMediaMetaTags from '../../../components/SocialMediaMetaTags.svelte';
+	import getRankedQueueName from '$lib/getRankedQueueName.js';
 
 	export let data;
 
@@ -49,8 +49,8 @@
 {#if $storesInitialized}
 	<main class="flex justify-center font-spiegel min-h-[--main-height]">
 		<div class="w-[800px] flex flex-col my-8 rounded-xl border border-league-grey-2">
-			<div class="p-4 flex flex-row gap-8">
-				<div class="w-32 h-32">
+			<div class="p-4 pb-0 flex flex-row gap-8">
+				<div class="w-32 h-32 mb-8 flex-shrink-0">
 					<div
 						class="rounded-full overflow-hidden bg-gradient-to-t from-league-gold-5 to-league-gold-4"
 					>
@@ -67,14 +67,37 @@
 					</div>
 				</div>
 
-				<div class="py-2">
+				<div class="w-full flex flex-col justify-between pb-2">
 					<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
 						{data.data.riotAccountData.gameName}
 						<span class="text-league-grey-2">#{data.data.riotAccountData.tagLine}</span>
 					</h1>
+					<div class="w-full flex gap-16">
+						{#each data.data.rankData as rankData}
+							<div class="h-28 flex gap-3 items-center">
+								<img
+									class="h-full"
+									src="https://f005.backblazeb2.com/file/pentakill/rank_{rankData.tier.toLowerCase()}.png"
+									alt="{rankData.tier.toLowerCase()} rank emblem"
+								/>
+								<div>
+									<p class="text-xs font-bold font-beaufort text-league-grey-1">
+										{getRankedQueueName(rankData.queueType)}
+									</p>
+									<p class="text-xl font-bold font-beaufort text-league-gold-1">
+										{rankData.tier}
+										{rankData.rank}
+									</p>
+									<p class="text-xs font-spiegel text-league-grey-1">
+										{rankData.wins}W {rankData.losses}L | {rankData.leaguePoints} LP
+									</p>
+								</div>
+							</div>
+						{/each}
+					</div>
 				</div>
 			</div>
-			<hr class="mt-4 border-league-grey-2" />
+			<hr class="border-league-grey-2" />
 			<div class="p-4 flex-grow">
 				{#if matches}
 					<div class="flex flex-col gap-4">

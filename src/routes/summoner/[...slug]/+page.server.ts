@@ -1,4 +1,5 @@
 import getRegion from '$lib/getRegion.js';
+import { getRiotAccount } from '$lib/getRiotAccount';
 import getSummonerIcon from '$lib/getSummonerIcon.js';
 import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { error, redirect } from '@sveltejs/kit';
@@ -20,12 +21,15 @@ export const load = async ({ params }) => {
 	const tag = usernameTagArr[1];
 
 	let summonerIconUrl: string;
+	let rankData: LeagueEntryDTO[];
+	let matchPromises: Promise<CustomMatchDto>[] = [];
 
 	if (region[0] === '' || !username || tag === '') {
 		throw error(404, 'Not Found');
 	}
 
-	const riotAccountData = await getRiotAccount(username, tag);
+	const riotAccountData = await getRiotAccount(username, tag, RIOT_API_KEY);
+
 	const data = await getSummonerData(region[0], riotAccountData.puuid).then(
 		async (summonerData) => {
 			if (isRiotStatusCode(summonerData)) {
@@ -33,31 +37,24 @@ export const load = async ({ params }) => {
 				throw error(404, 'Not Found');
 			}
 
-			await getSummonerIcon(summonerData.profileIconId).then((icon) => {
-				summonerIconUrl = icon;
-			});
+			summonerIconUrl = await getSummonerIcon(summonerData.profileIconId);
+			rankData = await getRankData(region[0], summonerData.puuid);
+			await getMatchIds(region[1], summonerData.puuid).then(async (matchData) => {
+				isRiotStatusCode(matchData);
 
-			return getRankData(region[0], summonerData.id).then((rankData) => {
-				isRiotStatusCode(rankData);
-
-				return getMatchIds(region[1], summonerData.puuid).then(async (matchData) => {
-					isRiotStatusCode(matchData);
-
-					let matchPromises: Promise<CustomMatchDto>[] = [];
-					matchData.forEach((matchId: string) => {
-						matchPromises.push(getMatchData(region[1], matchId, summonerData));
-					});
-
-					return {
-						region: slugArr[0],
-						summonerIconUrl,
-						riotAccountData,
-						summonerData,
-						rankData,
-						matches: await Promise.all(matchPromises)
-					};
+				matchData.forEach((matchId: string) => {
+					matchPromises.push(getMatchData(region[1], matchId, summonerData));
 				});
 			});
+
+			return {
+				region: slugArr[0],
+				summonerIconUrl,
+				riotAccountData,
+				summonerData,
+				rankData,
+				matches: await Promise.all(matchPromises)
+			};
 		}
 	);
 
@@ -71,13 +68,6 @@ export const load = async ({ params }) => {
 	}
 };
 
-async function getRiotAccount(name: string, tag: string) {
-	const acountDataJson = await fetch(
-		`https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${name}/${tag}?api_key=${RIOT_API_KEY}`
-	);
-	return (await acountDataJson.json()) as AccountDto;
-}
-
 async function getSummonerData(region: string, puuid: string) {
 	const summonerDataJson = await fetch(
 		`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${RIOT_API_KEY}`
@@ -86,12 +76,12 @@ async function getSummonerData(region: string, puuid: string) {
 	return summonerData;
 }
 
-async function getRankData(region: string, summonerId: string) {
+async function getRankData(region: string, puuid: string) {
 	const rankData = await fetch(
-		`https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${RIOT_API_KEY}`
+		`https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}?api_key=${RIOT_API_KEY}`
 	);
 	const rankDataJson = await rankData.json();
-	return rankDataJson;
+	return rankDataJson as LeagueEntryDTO[];
 }
 
 async function getMatchIds(region: string, puuid: string) {

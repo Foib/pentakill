@@ -5,7 +5,7 @@
  * @param queueType -
  * @param tier -
  * @param rank - The player's division within a tier.
- * @param leaguePonumbers -
+ * @param leaguePoints -
  * @param wins - Winning team on Summoners Rift.
  * @param losses - Losing team on Summoners Rift.
  * @param hotStreak -
@@ -21,7 +21,7 @@ type LeagueEntryDTO = {
 	queueType: string;
 	tier: string;
 	rank: string;
-	leaguePonumbers: number;
+	leaguePoints: number;
 	wins: number;
 	losses: number;
 	hotStreak: boolean;
