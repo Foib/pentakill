@@ -1,18 +1,15 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import Footer from '../components/Footer.svelte';
 	import Navbar from '../components/Navbar.svelte';
-</script>
 
-<link
-	rel="stylesheet"
-	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
-/>
+	let { children } = $props();
+</script>
 
 <div class="min-w-[800px]">
 	<div class="bg-league-hextech-black">
 		<Navbar />
-		<slot />
+		{@render children()}
 	</div>
 	<Footer />
 </div>

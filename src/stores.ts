@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
 export const storesInitialized = writable(false);
-export const ddragonVersionStore = writable('');
-export const summonerSpellDataStore = writable({} as any);
-export const runesDataStore = writable([] as RunePath[]);
-export const mapsDataStore = writable([] as any[]);
-export const queuesStore = writable([] as any[]);
+export const itemDataStore = writable<ItemData[]>([]);
+export const mapsDataStore = writable<MapData[]>([]);
+export const queuesStore = writable<QueueData[]>([]);
+export const runesDataStore = writable<RuneData[]>([]);
+export const summonerSpellDataStore = writable<SummonerSpellData[]>([]);

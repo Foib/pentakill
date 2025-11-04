@@ -1,38 +1,57 @@
-import getDdragonVersion from '$lib/getDdragonVersion';
 import getMapsData from '$lib/getMapsData';
 import getQueues from '$lib/getQueues';
 import getRunesData from '$lib/getRunesData';
 import getSummonerSpellData from '$lib/getSummonerSpellData';
 import {
-	ddragonVersionStore,
+	itemDataStore,
 	summonerSpellDataStore,
 	queuesStore,
 	storesInitialized,
 	runesDataStore,
 	mapsDataStore
 } from '../stores';
+import getItemData from '$lib/getItemData';
+import { get } from 'svelte/store';
 
-export function load() {
-	getQueues().then((queues) => {
-		queuesStore.set(queues);
-	});
+export function load({ fetch }) {
+	if (get(storesInitialized)) {
+		return;
+	}
 
-	getMapsData().then((mapsData) => {
-		mapsDataStore.set(mapsData);
-	});
+	let promises = [];
 
-	getDdragonVersion().then((ddragonVersion) => {
-		ddragonVersionStore.set(ddragonVersion);
+	promises.push(
+		getItemData(fetch).then((itemData) => {
+			itemDataStore.set(itemData);
+		})
+	);
 
-		getSummonerSpellData().then((summonerSpellData) => {
+	promises.push(
+		getQueues(fetch).then((queues) => {
+			queuesStore.set(queues);
+		})
+	);
+
+	promises.push(
+		getMapsData(fetch).then((mapsData) => {
+			mapsDataStore.set(mapsData);
+		})
+	);
+
+	promises.push(
+		getSummonerSpellData(fetch).then((summonerSpellData) => {
 			summonerSpellDataStore.set(summonerSpellData);
+		})
+	);
 
-			getRunesData().then((runesData) => {
-				runesDataStore.set(runesData);
+	promises.push(
+		getRunesData(fetch).then((runesData) => {
+			runesDataStore.set(runesData);
+		})
+	);
 
-				storesInitialized.set(true);
-				console.log('Stores initialized');
-			});
-		});
+	Promise.all(promises).then(() => {
+		storesInitialized.set(true);
+		console.log('Stores initialized');
 	});
 }

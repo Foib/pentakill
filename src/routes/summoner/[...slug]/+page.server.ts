@@ -1,18 +1,18 @@
 import getRegion from '$lib/getRegion.js';
 import { getRiotAccount } from '$lib/getRiotAccount';
-import getSummonerIcon from '$lib/getSummonerIcon.js';
+import getSummonerIconUrl from '$lib/getSummonerIconUrl.js';
 import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { error, redirect } from '@sveltejs/kit';
 
 let RIOT_API_KEY: string | undefined;
 
-if (process.env.NODE_ENV === 'production') {
-	RIOT_API_KEY = process.env.RIOT_API_KEY;
+if (Bun.env.NODE_ENV === 'production') {
+	RIOT_API_KEY = Bun.env.RIOT_API_KEY;
 } else {
 	RIOT_API_KEY = import.meta.env.VITE_RIOT_API_KEY;
 }
 
-export const load = async ({ params }) => {
+export const load = async ({ params, fetch }) => {
 	const slugArr = params.slug.split('/', 2);
 	const region = getRegion(slugArr[0]);
 
@@ -28,7 +28,7 @@ export const load = async ({ params }) => {
 		throw error(404, 'Not Found');
 	}
 
-	const riotAccountData = await getRiotAccount(username, tag, RIOT_API_KEY);
+	const riotAccountData = await getRiotAccount(fetch, username, tag, RIOT_API_KEY);
 
 	const data = await getSummonerData(region[0], riotAccountData.puuid).then(
 		async (summonerData) => {
@@ -37,7 +37,7 @@ export const load = async ({ params }) => {
 				throw error(404, 'Not Found');
 			}
 
-			summonerIconUrl = await getSummonerIcon(summonerData.profileIconId);
+			summonerIconUrl = getSummonerIconUrl(summonerData.profileIconId);
 			rankData = await getRankData(region[0], summonerData.puuid);
 			await getMatchIds(region[1], summonerData.puuid).then(async (matchData) => {
 				isRiotStatusCode(matchData);

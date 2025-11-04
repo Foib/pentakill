@@ -2,12 +2,13 @@
 	import { onMount } from 'svelte';
 	import SocialMediaMetaTags from '../components/SocialMediaMetaTags.svelte';
 	import { goto } from '$app/navigation';
+	import spinner from '$lib/assets/spinner.png';
 
-	let loading = false;
-	let summonerNameInputElement: HTMLInputElement;
+	let loading = $state(false);
+	let summonerNameInputElement = $state<HTMLInputElement | null>(null);
 
-	let region = 'NA';
-	let summonerName = '';
+	let region = $state('NA');
+	let summonerName = $state('');
 
 	const regions = [
 		'NA',
@@ -28,7 +29,7 @@
 		'TH'
 	];
 
-	let recent: RecentSummoner[] = [];
+	let recent = $state<RecentSummoner[]>([]);
 
 	onMount(() => {
 		loading = false;
@@ -81,71 +82,71 @@
 
 <SocialMediaMetaTags />
 
-<main class="w-full h-[--main-height] flex justify-center">
+<main class="h-main-height flex w-full justify-center">
 	{#if !loading}
 		<div
 			class="group mb-auto font-spiegel"
-			style="margin-top: calc(calc(var(--main-height) / 2) - 2rem);"
+			style="margin-top: calc(calc(100vh - 64px) / 2 - 2rem);"
 		>
 			<div
-				class="w-[500px] h-16 flex gap-4 border border-league-gold-5 focus-within:border-league-gold-1 rounded-[2rem] {recent.length >
+				class="flex h-16 w-[500px] gap-4 rounded-4xl border border-league-gold-5 focus-within:border-league-gold-1 {recent.length >
 				0
 					? 'focus-within:rounded-b-none'
 					: ''} overflow-hidden transition-all"
 			>
 				<select
-					class="pl-4 bg-transparent text-league-gold-4 cursor-pointer outline-none"
+					class="cursor-pointer bg-transparent pl-4 text-league-gold-4 outline-none"
 					bind:value={region}
-					on:change={() => {
+					onchange={() => {
 						localStorage.setItem('region', region);
 					}}
 				>
 					{#each regions as r}
-						<option class="text-league-gold-1 bg-league-hextech-black">{r}</option>
+						<option class="bg-league-hextech-black text-league-gold-1">{r}</option>
 					{/each}
 				</select>
 				<input
 					type="text"
 					placeholder="Username + #TAG"
-					class="w-full bg-transparent text-xl text-league-gold-1 placeholder:text-league-grey-2 outline-none"
+					class="placeholder:text-3 w-full bg-transparent text-xl text-league-gold-1 outline-none"
 					bind:this={summonerNameInputElement}
 					bind:value={summonerName}
-					on:keypress={(e) => {
+					onkeypress={(e) => {
 						if (e.key === 'Enter') {
 							redirectToSummoner();
 						}
 					}}
 				/>
 				<button
-					class="pr-4 flex justify-center items-center text-league-gold-4 hover:text-league-gold-1 outline-none transition-all"
-					on:click={redirectToSummoner}
+					class="flex items-center justify-center pr-4 text-league-gold-4 transition-all outline-none hover:text-league-gold-1"
+					onclick={redirectToSummoner}
 				>
 					<span class="material-symbols-outlined"> search </span>
 				</button>
 			</div>
 			{#if recent.length > 0}
 				<div
-					class="opacity-0 group-focus-within:block group-focus-within:opacity-100 w-full border border-t-0 rounded-b-[2rem] overflow-hidden border-league-grey-2 transition-all"
+					class="w-full overflow-hidden rounded-b-4xl border border-t-0 border-league-grey-3 opacity-0 transition-all group-focus-within:block group-focus-within:opacity-100"
 				>
 					{#each recent as r, i}
-						<div class="w-full flex gap-4 hover:bg-league-blue-7">
+						<div class="flex w-full gap-4 hover:bg-league-blue-7">
 							<button
 								data-sveltekit-preload-data="off"
-								on:click={() => {
+								onclick={() => {
 									summonerName = r.name;
 									region = r.region;
 									redirectToSummoner();
 								}}
-								class="w-full h-16 flex gap-4 items-center justify-between text-left"
+								class="flex h-16 w-full items-center justify-between gap-4 text-left"
 							>
 								<span class="w-[76px] pl-4 text-league-gold-4">{r.region}</span>
 								<span class="w-full text-xl text-league-gold-1">{r.name}</span>
 							</button>
 							<button
-								class="pr-4 flex justify-center items-center text-league-gold-4 hover:text-league-gold-1 outline-none transition-all"
-								on:click={(e) => {
+								class="flex items-center justify-center pr-4 text-league-gold-4 transition-all outline-none hover:text-league-gold-1"
+								onclick={(e) => {
 									e.preventDefault();
-									summonerNameInputElement.focus();
+									summonerNameInputElement?.focus();
 
 									let newRecent = [...recent];
 									newRecent.splice(i, 1);
@@ -161,8 +162,8 @@
 			{/if}
 		</div>
 	{:else}
-		<div class="w-full h-full flex justify-center items-center">
-			<img src="/assets/spinner.png" alt="Loading" class="w-16 h-16 animate-spin" />
+		<div class="flex h-full w-full items-center justify-center">
+			<img src={spinner} alt="Loading" class="h-16 w-16 animate-spin" />
 		</div>
 	{/if}
 </main>

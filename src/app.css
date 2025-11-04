@@ -1,10 +1,36 @@
 @import url('./fonts.css');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+	--color-league-blue-1: #cdfafa;
+	--color-league-blue-2: #0ac8b9;
+	--color-league-blue-3: #0397ab;
+	--color-league-blue-4: #005a82;
+	--color-league-blue-5: #0a323c;
+	--color-league-blue-6: #091428;
+	--color-league-blue-7: #0a1428;
+
+	--color-league-gold-1: #f0e6d2;
+	--color-league-gold-2: #c8aa6e;
+	--color-league-gold-3: #c8aa6e;
+	--color-league-gold-4: #c89b3c;
+	--color-league-gold-5: #785a28;
+	--color-league-gold-6: #463714;
+	--color-league-gold-7: #32281e;
+
+	--color-league-grey-1: #a09b8c;
+	--color-league-grey-2: #5b5a56;
+	--color-league-grey-3: #3c3c41;
+	--color-league-grey-4: #1e2328;
+	--color-league-grey-cool: #1e282d;
+
+	--color-league-hextech-black: #010a13;
+
+	--font-beaufort: 'Beaufort for LOL', sans-serif;
+	--font-spiegel: 'Spiegel', sans-serif;
+}
 
 :root {
-	--main-height: calc(100vh - 64px);
 	color-scheme: dark;
 }
 
@@ -26,4 +52,12 @@
 	background-color: #785a28;
 	border-radius: 6px;
 	border: 4px solid #010a13;
+}
+
+.h-main-height {
+	height: calc(100vh - 64px);
+}
+
+.min-h-main-height {
+	min-height: calc(100vh - 64px);
 }

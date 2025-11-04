@@ -1,11 +1,7 @@
-import { get } from 'svelte/store';
-import { ddragonVersionStore } from '../stores';
-
-export default async function getRunesData(): Promise<RunePath[]> {
-	const ddragonVersion = get(ddragonVersionStore);
-	return await (
+export default async function getRunesData(fetch: typeof globalThis.fetch) {
+	return (await (
 		await fetch(
-			`https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/data/en_US/runesReforged.json`
+			'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perks.json'
 		)
-	).json();
+	).json()) as RuneData[];
 }

@@ -5,6 +5,7 @@
 	import MatchHistoryItem from '../../../components/matchHistory/MatchHistoryItem.svelte';
 	import SocialMediaMetaTags from '../../../components/SocialMediaMetaTags.svelte';
 	import getRankedQueueName from '$lib/getRankedQueueName.js';
+	import spinner from '$lib/assets/spinner.png';
 
 	export let data;
 
@@ -50,48 +51,59 @@
 />
 
 {#if $storesInitialized}
-	<main class="flex justify-center font-spiegel min-h-[--main-height]">
-		<div class="w-[800px] flex flex-col my-8 rounded-xl border border-league-grey-2">
-			<div class="p-4 pb-0 flex flex-row gap-8">
-				<div class="w-32 h-32 mb-8 flex-shrink-0">
+	<main class="min-h-main-height flex justify-center font-spiegel">
+		<div class="my-8 flex w-[800px] flex-col rounded-xl border border-league-grey-2">
+			<div class="flex flex-row gap-8 p-4 pb-0">
+				<div class="mb-8 h-32 w-32 shrink-0">
 					<div
-						class="rounded-full overflow-hidden bg-gradient-to-t from-league-gold-5 to-league-gold-4"
+						class="overflow-hidden rounded-full bg-linear-to-t from-league-gold-5 to-league-gold-4"
 					>
 						<div class="p-1">
 							<img src={data.data.summonerIconUrl} alt="Summoner Icon" class="rounded-full" />
 						</div>
 					</div>
-					<div class="absolute -translate-y-1/2 w-32 h-6 flex items-center justify-center">
+					<div class="absolute flex h-6 w-32 -translate-y-1/2 items-center justify-center">
 						<span
-							class="px-2 bg-gradient-to-r from-league-blue-4 to-league-blue-2 text-league-hextech-black text-lg font-bold rounded-full border-4 border-league-hextech-black"
+							class="rounded-full border-4 border-league-hextech-black bg-linear-to-r from-league-blue-4 to-league-blue-2 px-2 text-lg font-bold text-league-hextech-black"
 						>
 							{data.data.summonerData.summonerLevel}
 						</span>
 					</div>
 				</div>
 
-				<div class="w-full flex flex-col justify-between pb-2">
-					<h1 class="text-4xl font-bold text-league-gold-1 font-beaufort">
+				<div class="flex w-full flex-col justify-between pb-2">
+					<h1 class="font-beaufort text-4xl font-bold text-league-gold-1">
 						{data.data.riotAccountData.gameName}
 						<span class="text-league-grey-2">#{data.data.riotAccountData.tagLine}</span>
 					</h1>
-					<div class="w-full flex gap-16">
+					<div class="flex w-full gap-16">
 						{#each data.data.rankData as rankData}
-							<div class="h-28 flex gap-3 items-center">
-								<img
-									class="h-full"
-									src="https://f005.backblazeb2.com/file/pentakill/rank_{rankData.tier.toLowerCase()}.png"
-									alt="{rankData.tier.toLowerCase()} rank emblem"
-								/>
+							<div class="flex h-28 items-center gap-3">
+								<div class="relative h-28 w-28">
+									<!-- <img
+										class="h-full"
+										src="https://f005.backblazeb2.com/file/pentakill/rank_{rankData.tier.toLowerCase()}.png"
+										alt="{rankData.tier.toLowerCase()} rank emblem"
+									/> -->
+									<video
+										src="https://raw.communitydragon.org/pbe/plugins/rcp-fe-lol-static-assets/global/default/videos/ranked/tier-promotion-to-{rankData.tier.toLowerCase()}.webm"
+										autoplay
+										muted
+										controls={false}
+										class="rank-anim pointer-events-none absolute top-1/2 left-1/2 aspect-video min-w-[460px] -translate-x-1/2 -translate-y-[calc(50%-4px)]"
+									>
+										<track kind="captions" />
+									</video>
+								</div>
 								<div>
-									<p class="text-xs font-bold font-beaufort text-league-grey-1">
+									<p class="font-beaufort text-xs font-bold text-league-grey-1">
 										{getRankedQueueName(rankData.queueType)}
 									</p>
-									<p class="text-xl font-bold font-beaufort text-league-gold-1">
+									<p class="font-beaufort text-xl font-bold text-league-gold-1">
 										{rankData.tier}
 										{rankData.rank}
 									</p>
-									<p class="text-xs font-spiegel text-league-grey-1">
+									<p class="font-spiegel text-xs text-league-grey-1">
 										{rankData.wins}W {rankData.losses}L | {rankData.leaguePoints} LP
 									</p>
 								</div>
@@ -101,7 +113,7 @@
 				</div>
 			</div>
 			<hr class="border-league-grey-2" />
-			<div class="p-4 flex-grow">
+			<div class="grow p-4">
 				{#if matches}
 					<div class="flex flex-col gap-4">
 						{#each matches as match, i}
@@ -110,18 +122,18 @@
 						{/each}
 					</div>
 				{:else}
-					<div class="h-full flex justify-center items-center pl-8">
-						<img src="/assets/spinner.png" alt="Loading" class="w-16 h-16 animate-spin" />
+					<div class="flex h-full items-center justify-center pl-8">
+						<img src={spinner} alt="Loading" class="h-16 w-16 animate-spin" />
 					</div>
 				{/if}
 			</div>
 			{#if matches}
-				<div class="flex justify-center items-center mb-4">
+				<div class="mb-4 flex items-center justify-center">
 					{#if loadingMatches}
-						<img src="/assets/spinner.png" alt="Loading" class="w-16 h-16 m-2 animate-spin" />
+						<img src={spinner} alt="Loading" class="m-2 h-16 w-16 animate-spin" />
 					{:else}
 						<button
-							class="w-full h-20 text-league-gold-1 opacity-50 hover:opacity-100 font-beaufort text-2xl font-bold transition-all"
+							class="h-20 w-full font-beaufort text-2xl font-bold text-league-gold-1 opacity-50 transition-all hover:opacity-100"
 							on:click={loadMoreMatches}
 						>
 							Load More
@@ -132,3 +144,9 @@
 		</div>
 	</main>
 {/if}
+
+<style>
+	.rank-anim {
+		mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 1), rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+	}
+</style>

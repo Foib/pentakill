@@ -1,12 +1,7 @@
-import { get } from 'svelte/store';
-import { ddragonVersionStore } from '../stores';
-
-export default async function getSummonerSpellData() {
-	const ddragonVersion = get(ddragonVersionStore);
-
-	return await (
+export default async function getSummonerSpellData(fetch: typeof globalThis.fetch) {
+	return (await (
 		await fetch(
-			`https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/data/en_US/summoner.json`
+			'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/summoner-spells.json'
 		)
-	).json();
+	).json()) as SummonerSpellData[];
 }

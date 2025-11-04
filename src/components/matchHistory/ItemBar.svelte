@@ -1,6 +1,7 @@
 <script lang="ts">
-	import getItemIcon from '$lib/getItemIcon';
+	import getIconUrl from '$lib/getIconUrl';
 	import type { CustomMatchDto } from '$lib/riotTypes/Misc';
+	import { itemDataStore } from '../../stores';
 
 	export let match: CustomMatchDto;
 	export let itemIndex: 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -11,8 +12,13 @@
 	class={itemIndex !== 6 ? 'border-r border-league-gold-5' : ''}
 >
 	{#if match.currentSummoner[`item${itemIndex}`] !== 0}
-		{#await getItemIcon(match.currentSummoner[`item${itemIndex}`]) then itemIcon}
-			<img src={itemIcon} alt="Item" class="h-full" />
-		{/await}
+		<img
+			src={getIconUrl(
+				$itemDataStore.find((item) => item.id === match.currentSummoner[`item${itemIndex}`])
+					?.iconPath ?? ''
+			)}
+			alt={match.currentSummoner[`item${itemIndex}`].toString()}
+			class="h-full"
+		/>
 	{/if}
 </div>

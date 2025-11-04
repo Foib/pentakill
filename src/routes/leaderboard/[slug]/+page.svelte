@@ -4,7 +4,7 @@
 	let summoners = data.summoners;
 </script>
 
-<main class="w-full h-[--main-height] flex justify-center items-center">
+<main class="flex h-[--main-height] w-full items-center justify-center">
 	<ol>
 		{#each summoners as summoner}
 			<li>

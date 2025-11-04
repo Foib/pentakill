@@ -1,24 +1,24 @@
 <div class="sticky top-0 z-50">
-	<nav class="h-16 flex items-center px-4 bg-league-hextech-black">
+	<nav class="flex h-16 items-center bg-league-hextech-black px-4">
 		<a
-			class="mr-32 font-beaufort font-bold bg-gradient-to-r from-league-blue-4 to-league-blue-2 bg-clip-text text-transparent text-4xl transition-all"
+			class="font-beaufort mr-32 bg-linear-to-r from-league-blue-4 to-league-blue-2 bg-clip-text text-4xl font-bold text-transparent transition-all"
 			href="/">PENTAKILL.LOL</a
 		>
-		<div class="w-[1px] h-full bg-league-grey-2" />
-		<div class="w-full h-full flex">
+		<div class="h-full w-px bg-league-grey-3"></div>
+		<div class="flex h-full w-full">
 			<a
-				class="flex items-center justify-center w-1/3 h-full text-center text-league-gold-1 opacity-50 hover:opacity-100 font-beaufort font-semibold text-lg transition-all"
+				class="font-beaufort flex h-full w-1/3 items-center justify-center text-center text-lg font-semibold text-league-gold-1 opacity-50 transition-all hover:opacity-100"
 				href="/">HOME</a
 			>
 			<a
-				class="flex items-center justify-center w-1/3 h-full text-center text-league-gold-1 opacity-50 hover:opacity-100 font-beaufort font-semibold text-lg transition-all"
+				class="font-beaufort flex h-full w-1/3 items-center justify-center text-center text-lg font-semibold text-league-gold-1 opacity-50 transition-all hover:opacity-100"
 				href="/leaderboard">LEADERBOARD</a
 			>
 			<a
-				class="flex items-center justify-center w-1/3 h-full text-center text-league-gold-1 opacity-50 hover:opacity-100 font-beaufort font-semibold text-lg transition-all"
+				class="font-beaufort flex h-full w-1/3 items-center justify-center text-center text-lg font-semibold text-league-gold-1 opacity-50 transition-all hover:opacity-100"
 				href="/tracker">TRACKER</a
 			>
 		</div>
 	</nav>
-	<div class="h-[2px] bg-gradient-to-r from-league-gold-5 to-league-gold-4" />
+	<div class="h-0.5 bg-linear-to-r from-league-gold-5 to-league-gold-4"></div>
 </div>

@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SocialMediaMetaTags from '../../components/SocialMediaMetaTags.svelte';
-	import getSummonerIcon from '$lib/getSummonerIcon';
-	import type { RiotStatusCode } from '$lib/riotTypes/Misc';
+	import getSummonerIconUrl from '$lib/getSummonerIconUrl';
 
-	let region = 'NA';
-	let summonerName = '';
+	let region = $state('NA');
+	let summonerName = $state('');
 
 	const regions = [
 		'NA',
@@ -33,7 +32,7 @@
 		}
 	});
 
-	let users: User[] = [];
+	let users = $state<User[]>([]);
 
 	function addUser() {
 		if (
@@ -50,15 +49,13 @@
 					if (d.status === 200) {
 						const summonerData: SummonerDto = d.summonerData;
 
-						getSummonerIcon(summonerData.profileIconId).then((icon) => {
-							const newUser = {
-								id: summonerData.id,
-								name: summonerData.name,
-								region,
-								icon
-							} as User;
-							users = [newUser, ...users];
-						});
+						const newUser = {
+							id: summonerData.id,
+							name: summonerData.name,
+							region,
+							icon: getSummonerIconUrl(summonerData.profileIconId)
+						} as User;
+						users = [newUser, ...users];
 					}
 				})
 			);
@@ -77,63 +74,63 @@
 
 <SocialMediaMetaTags />
 
-<main class="w-full h-[--main-height] flex justify-center items-center">
+<main class="h-main-height flex w-full items-center justify-center">
 	<div class="w-[500px]">
 		<div
-			class="h-16 flex gap-4 border border-league-gold-5 focus-within:border-league-gold-1 rounded-t-[2rem] overflow-hidden font-spiegel transition-all"
+			class="flex h-16 gap-4 overflow-hidden rounded-t-4xl border border-league-gold-5 font-spiegel transition-all focus-within:border-league-gold-1"
 		>
 			<select
-				class="pl-4 bg-transparent text-league-gold-4 cursor-pointer outline-none"
+				class="cursor-pointer bg-transparent pl-4 text-league-gold-4 outline-none"
 				bind:value={region}
-				on:change={() => {
+				onchange={() => {
 					localStorage.setItem('region', region);
 				}}
 			>
 				{#each regions as r}
-					<option class="text-league-gold-1 bg-league-hextech-black">{r}</option>
+					<option class="bg-league-hextech-black text-league-gold-1">{r}</option>
 				{/each}
 			</select>
 			<input
 				type="text"
 				placeholder="Username"
-				class="w-full bg-transparent text-xl text-league-gold-1 placeholder:text-league-grey-2 outline-none"
+				class="w-full bg-transparent text-xl text-league-gold-1 outline-none placeholder:text-league-grey-3"
 				bind:value={summonerName}
-				on:keypress={(e) => {
+				onkeypress={(e) => {
 					if (e.key === 'Enter') {
 						addUser();
 					}
 				}}
 			/>
 			<button
-				class="w-16 pr-4 flex justify-center items-center text-league-gold-4 hover:text-league-gold-1 outline-none transition-all"
-				on:click={() => {
+				class="flex w-16 items-center justify-center pr-4 text-league-gold-4 transition-all outline-none hover:text-league-gold-1"
+				onclick={() => {
 					addUser();
 				}}
 			>
 				<span class="material-symbols-outlined"> add </span>
 			</button>
 		</div>
-		<div class="h-[401px] border border-t-0 border-league-grey-2 rounded-b-[2rem] overflow-hidden">
-			<div class="w-full h-full overflow-x-hidden overflow-y-auto">
+		<div class="h-[401px] overflow-hidden rounded-b-4xl border border-t-0 border-league-grey-3">
+			<div class="h-full w-full overflow-x-hidden overflow-y-auto">
 				<div>
 					{#each users as user, i}
 						<div
-							class="h-20 px-4 flex items-center gap-4 font-beaufort text-2xl bg-white {i % 2 == 0
+							class="flex h-20 items-center gap-4 bg-white px-4 font-beaufort text-2xl {i % 2 == 0
 								? 'bg-opacity-0'
 								: 'bg-opacity-[0.01]'}"
 						>
 							<div
-								class="w-16 aspect-square rounded-full overflow-hidden m-2 border-2 border-league-gold-4"
+								class="m-2 aspect-square w-16 overflow-hidden rounded-full border-2 border-league-gold-4"
 							>
-								<img src={user.icon} alt="Summoner Icon" class="w-full h-full" />
+								<img src={user.icon} alt="Summoner Icon" class="h-full w-full" />
 							</div>
 							<div class="w-full">
 								<span class="text-league-gold-1">{user.name}</span>
 								<span class="text-league-gold-4"> ({user.region})</span>
 							</div>
 							<button
-								class="flex items-center p-2 rounded-full bg-transparent hover:bg-league-blue-7 text-league-gold-4 hover:text-league-gold-1 transition-all"
-								on:click={() => {
+								class="flex items-center rounded-full bg-transparent p-2 text-league-gold-4 transition-all hover:bg-league-blue-7 hover:text-league-gold-1"
+								onclick={() => {
 									users = users.filter((u) => u.name !== user.name);
 								}}
 							>
@@ -145,8 +142,8 @@
 			</div>
 		</div>
 		<button
-			class="w-2/3 h-12 -translate-y-[1px] mx-auto flex justify-center items-center border border-league-gold-5 hover:border-league-gold-1 text-league-gold-4 hover:text-league-gold-1 font-beaufort text-2xl rounded-b-3xl outline-none transition-all"
-			on:click={() => {
+			class="mx-auto flex h-12 w-2/3 -translate-y-px items-center justify-center rounded-b-3xl border border-league-gold-5 font-beaufort text-2xl text-league-gold-4 transition-all outline-none hover:border-league-gold-1 hover:text-league-gold-1"
+			onclick={() => {
 				let str = '';
 				for (let i = 0; i < users.length; i++) {
 					str += `${users[i].region.toLowerCase()},${users[i].id}`;
@@ -158,6 +155,6 @@
 				window.location.href = '/leaderboard/' + str;
 			}}>Create Leaderboard</button
 		>
-		<p class="mt-4 text-center font-spiegel text-league-grey-2">Not working yet!</p>
+		<p class="mt-4 text-center font-spiegel text-league-grey-3">Not working yet!</p>
 	</div>
 </main>

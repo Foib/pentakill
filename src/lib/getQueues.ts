@@ -1,3 +1,7 @@
-export default async function getQueues() {
-	return await (await fetch(`https://static.developer.riotgames.com/docs/lol/queues.json`)).json();
+export default async function getQueues(fetch: typeof globalThis.fetch) {
+	return (await (
+		await fetch(
+			'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/queues.json'
+		)
+	).json()) as QueueData[];
 }
