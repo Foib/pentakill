@@ -13,7 +13,7 @@ import {
 import getItemData from '$lib/getItemData';
 import { get } from 'svelte/store';
 
-export function load({ fetch }) {
+export function load(event) {
 	if (get(storesInitialized)) {
 		return;
 	}
@@ -21,31 +21,31 @@ export function load({ fetch }) {
 	let promises = [];
 
 	promises.push(
-		getItemData(fetch).then((itemData) => {
+		getItemData(event.fetch).then((itemData) => {
 			itemDataStore.set(itemData);
 		})
 	);
 
 	promises.push(
-		getQueues(fetch).then((queues) => {
+		getQueues(event.fetch).then((queues) => {
 			queuesStore.set(queues);
 		})
 	);
 
 	promises.push(
-		getMapsData(fetch).then((mapsData) => {
+		getMapsData(event.fetch).then((mapsData) => {
 			mapsDataStore.set(mapsData);
 		})
 	);
 
 	promises.push(
-		getSummonerSpellData(fetch).then((summonerSpellData) => {
+		getSummonerSpellData(event.fetch).then((summonerSpellData) => {
 			summonerSpellDataStore.set(summonerSpellData);
 		})
 	);
 
 	promises.push(
-		getRunesData(fetch).then((runesData) => {
+		getRunesData(event.fetch).then((runesData) => {
 			runesDataStore.set(runesData);
 		})
 	);
