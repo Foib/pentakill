@@ -89,7 +89,7 @@
 			style="margin-top: calc(calc(100vh - 64px) / 2 - 2rem);"
 		>
 			<div
-				class="flex h-16 w-[500px] gap-4 rounded-4xl border border-league-gold-5 focus-within:border-league-gold-1 {recent.length >
+				class="flex h-16 w-full gap-4 rounded-4xl border border-league-gold-5 focus-within:border-league-gold-1 sm:w-sm md:w-[500px] {recent.length >
 				0
 					? 'focus-within:rounded-b-none'
 					: ''} overflow-hidden transition-all"

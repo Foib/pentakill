@@ -1,4 +1,4 @@
-<footer class="font-spiegel bg-league-hextech-black px-[20%] pt-32 pb-8 text-center">
+<footer class="w-full max-w-full bg-league-hextech-black px-8 pt-32 pb-8 text-center font-spiegel">
 	<p class="mb-4 text-league-grey-3">© 2025 PENTAKILL.LOL</p>
 	<p class="text-xs text-league-grey-3">
 		PENTAKILL.LOL isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot

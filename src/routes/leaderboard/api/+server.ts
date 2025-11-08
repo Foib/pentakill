@@ -1,14 +1,7 @@
 import getRegion from '$lib/getRegion.js';
 import { isRiotStatusCode, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { json } from '@sveltejs/kit';
-
-let RIOT_API_KEY: string | undefined;
-
-if (Bun.env.NODE_ENV === 'production') {
-	RIOT_API_KEY = Bun.env.RIOT_API_KEY;
-} else {
-	RIOT_API_KEY = import.meta.env.VITE_RIOT_API_KEY;
-}
+import { env } from '$env/dynamic/private';
 
 export async function GET(event) {
 	const _region = event.url.searchParams.get('region');
@@ -38,7 +31,7 @@ export async function GET(event) {
 
 async function getSummonerData(region: string, username: string) {
 	const summonerDataJson = await fetch(
-		`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}?api_key=${RIOT_API_KEY}`
+		`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}?api_key=${env.VITE_RIOT_API_KEY}`
 	);
 	const summonerData: SummonerDto | RiotStatusCode = await summonerDataJson.json();
 	return summonerData;

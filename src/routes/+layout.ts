@@ -18,7 +18,7 @@ export function load(event) {
 		return;
 	}
 
-	let promises = [];
+	const promises = [];
 
 	promises.push(
 		getItemData(event.fetch).then((itemData) => {

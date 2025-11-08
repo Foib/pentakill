@@ -17,6 +17,7 @@ type MetadataDto = {
 	participants: string[];
 };
 /**
+ * @param endOfGameResult - Refer to indicate if the game ended in termination.
  * @param gameCreation - Unix timestamp for when the game is created on the game server (i.e., the loading screen).
  * @param gameDuration - Prior to patch 11.20, this field returns the game length in milliseconds calculated from gameEndTimestamp - gameStartTimestamp. Post patch 11.20, this field returns the max timePlayed of any participant in the game in seconds, which makes the behavior of this field consistent with that of match-v4. The best way to handling the change in this field is to treat the value as milliseconds if the gameEndTimestamp field isn't in the response and to treat the value as seconds if gameEndTimestamp is in the response.
  * @param gameEndTimestamp - Unix timestamp for when match ends on the game server. This timestamp can occasionally be significantly longer than when the match "ends". The most reliable way of determining the timestamp for the end of the match would be to add the max time played of any participant to the gameStartTimestamp. This field was added to match-v5 in patch 11.20 on Oct 5th, 2021.
@@ -34,6 +35,7 @@ type MetadataDto = {
  * @param tournamentCode - Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021.
  */
 type InfoDto = {
+	endOfGameResult: string;
 	gameCreation: number;
 	gameDuration: number;
 	gameEndTimestamp: number;
@@ -113,7 +115,7 @@ type InfoDto = {
  * @param profileIcon -
  * @param puuid -
  * @param quadraKills -
- * @param riotIdName -
+ * @param riotIdGameName -
  * @param riotIdTagline -
  * @param role -
  * @param sightWardsBoughtInGame -
@@ -220,7 +222,7 @@ type ParticipantDto = {
 	profileIcon: number;
 	puuid: string;
 	quadraKills: number;
-	riotIdName: string;
+	riotIdGameName: string;
 	riotIdTagline: string;
 	role: string;
 	sightWardsBoughtInGame: number;
