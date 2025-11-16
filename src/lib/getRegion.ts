@@ -33,6 +33,8 @@ export default function getRegion(region: string) {
 			return ['tw2', 'sea'];
 		case 'vn':
 			return ['vn2', 'sea'];
+		case 'me':
+			return ['me1', 'europe'];
 		default:
 			return ['', ''];
 	}

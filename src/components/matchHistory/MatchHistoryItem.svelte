@@ -44,10 +44,10 @@
 			overviewRendered = true;
 		}}
 	>
-		<div class="flex h-full w-full gap-8">
+		<div class="flex h-full w-full gap-3 sm:gap-8">
 			<!-- Champion Icon and Level -->
 			<div
-				class="aspect-square h-full shrink-0 overflow-hidden rounded-full border-2 border-league-gold-5"
+				class="my-auto aspect-square h-1/2 shrink-0 overflow-hidden rounded-lg border border-league-gold-5 sm:h-full sm:rounded-full sm:border-2"
 			>
 				<img
 					src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{match
@@ -59,7 +59,7 @@
 
 				{#if match.currentSummoner.teamPosition !== ''}
 					<div
-						class="absolute flex h-6 w-6 -translate-x-1 -translate-y-5 items-center justify-center overflow-hidden rounded-full border border-league-gold-4 bg-league-hextech-black p-0.5"
+						class="absolute flex size-4 -translate-x-1 -translate-y-3 items-center justify-center overflow-hidden rounded-sm border border-league-gold-5 bg-league-hextech-black p-0.5 sm:size-6 sm:-translate-x-1 sm:-translate-y-5 sm:rounded-full"
 					>
 						<img
 							src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{match.currentSummoner.teamPosition.toLowerCase()}.png"
@@ -68,9 +68,9 @@
 					</div>
 				{/if}
 				<div
-					class="absolute flex h-6 w-6 translate-x-14 -translate-y-5 items-center justify-center overflow-hidden rounded-full border border-league-gold-4 bg-league-hextech-black"
+					class="absolute flex size-4 translate-x-[1.6rem] -translate-y-3 items-center justify-center overflow-hidden rounded-sm border border-league-gold-5 bg-league-hextech-black sm:size-6 sm:translate-x-14 sm:-translate-y-5 sm:rounded-full"
 				>
-					<p class="font-beaufort text-sm font-medium text-league-grey-1">
+					<p class="font-beaufort text-[0.5rem] text-league-grey-1 sm:text-sm sm:font-medium">
 						{match.currentSummoner.champLevel}
 					</p>
 				</div>
@@ -169,30 +169,37 @@
 		</div>
 
 		<!-- Items, KDA, CS -->
-		<div class="flex h-full w-28 shrink-0 flex-col justify-center gap-1 md:w-64 md:gap-2">
+		<div
+			class="flex h-full w-full shrink-0 flex-col justify-center sm:w-28 sm:gap-1 md:w-64 md:gap-2"
+		>
 			<div class="hidden border border-league-gold-5 md:flex">
 				{#each { length: 7 } as _, i}
 					<ItemBar participant={match.currentSummoner} itemIndex={convertNumberToItemIndex(i)} />
 				{/each}
 			</div>
 			<div class="h-14 w-28">
-				<div class="grid h-full w-full grid-cols-4 grid-rows-2 md:hidden">
-					{#each [0, 1, 2, 6, 3, 4, 5] as i}
+				<div
+					class="grid h-full w-full grid-cols-4 grid-rows-2 gap-px bg-league-gold-5 p-px md:hidden"
+				>
+					{#each [0, 1, 2, 6, 3, 4, 5] as itemIndex, i}
 						<div
-							class="aspect-square border border-league-gold-5 {i === 6
-								? 'row-span-2 my-auto h-1/2'
-								: 'h-full'}"
+							class=" bg-league-hextech-black {itemIndex === 6
+								? 'row-span-2 flex aspect-1/2 h-[calc(100%+2px)] -translate-y-px items-center'
+								: 'aspect-square h-full'}"
 						>
-							{#if match.currentSummoner[`item${convertNumberToItemIndex(i)}`] !== 0}
+							{#if match.currentSummoner[`item${convertNumberToItemIndex(itemIndex)}`] !== 0}
 								<img
 									src={getIconUrl(
 										$itemDataStore.find(
 											(item) =>
-												item.id === match.currentSummoner[`item${convertNumberToItemIndex(i)}`]
+												item.id ===
+												match.currentSummoner[`item${convertNumberToItemIndex(itemIndex)}`]
 										)?.iconPath ?? ''
 									)}
-									alt={match.currentSummoner[`item${convertNumberToItemIndex(i)}`].toString()}
-									class="h-full"
+									alt={match.currentSummoner[
+										`item${convertNumberToItemIndex(itemIndex)}`
+									].toString()}
+									class="w-full {itemIndex === 6 ? 'border border-l-0 border-league-gold-5' : ''}"
 								/>
 							{/if}
 						</div>
@@ -221,11 +228,28 @@
 					<img src={iconGold} alt="Gold" class="h-4" />
 				</div>
 			</div>
+
+			<div
+				class="flex h-full w-full shrink flex-col justify-center text-left font-spiegel text-[0.5rem] text-league-grey-1 sm:hidden"
+			>
+				<p>{getMapName(match.info.mapId)}</p>
+				<p>
+					<span>{formatGameDuration(match.info.gameDuration)}</span>
+					<span class="text-league-grey-3">•</span>
+					<span
+						>{new Date(match.info.gameCreation).toLocaleDateString(undefined, {
+							day: '2-digit',
+							month: '2-digit',
+							year: 'numeric'
+						})}</span
+					>
+				</p>
+			</div>
 		</div>
 
 		<!-- Map name, game duration, game date -->
 		<div
-			class="flex h-full w-full shrink flex-col justify-center gap-1 pl-2 text-left font-spiegel text-xs text-league-grey-1 sm:gap-2 sm:text-sm md:pl-8 md:text-base"
+			class="hidden h-full w-full shrink flex-col justify-center gap-1 pl-2 text-left font-spiegel text-xs text-league-grey-1 sm:flex sm:gap-2 sm:text-sm md:pl-8 md:text-base"
 		>
 			<p>{getMapName(match.info.mapId)}</p>
 			<p>

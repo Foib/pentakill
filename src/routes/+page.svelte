@@ -26,7 +26,8 @@
 		'PH',
 		'TW',
 		'VN',
-		'TH'
+		'TH',
+		'ME'
 	];
 
 	let recent = $state<RecentSummoner[]>([]);

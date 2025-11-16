@@ -14,6 +14,11 @@
 
 	onMount(() => {
 		document.title = `${data.data.riotAccountData.gameName}#${data.data.riotAccountData.tagLine} - PENTAKILL.LOL`;
+
+		console.log(
+			'%c  ',
+			`font-size:200px;background:url(\"${data.image}\");background-size:contain;background-repeat:no-repeat;`
+		);
 	});
 
 	$effect(() => {
@@ -52,13 +57,14 @@
 
 {#key data.data.summonerData.accountId}
 	<SocialMediaMetaTags
+		title={`${data.data.riotAccountData.gameName}#${data.data.riotAccountData.tagLine} | PENTAKILL.LOL`}
 		description={`${data.data.riotAccountData.gameName}#${
 			data.data.riotAccountData.tagLine
 		} | Level ${data.data.summonerData.summonerLevel} | ${data.data.rankData
 			.map((r) => `${getRankedQueueName(r.queueType)}: ${r.tier} ${r.rank}`)
 			.join(' | ')}`}
 		url={`https://www.pentakill.lol/summoner/${data.data.region}/${data.data.riotAccountData.gameName}-${data.data.riotAccountData.tagLine}`}
-		image={data.data.summonerIconUrl}
+		image={data.image}
 	/>
 
 	{#if $storesInitialized}
@@ -71,7 +77,7 @@
 						<div
 							class="overflow-hidden rounded-full bg-linear-to-t from-league-gold-5 to-league-gold-4"
 						>
-							<div class="p-1">
+							<div class="p-0.5 sm:p-1">
 								<img src={data.data.summonerIconUrl} alt="Summoner Icon" class="rounded-full" />
 							</div>
 						</div>
@@ -79,7 +85,7 @@
 							class="absolute flex h-6 w-20 -translate-y-1/2 items-center justify-center md:w-32"
 						>
 							<span
-								class="rounded-full border-4 border-league-hextech-black bg-linear-to-r from-league-blue-4 to-league-blue-2 px-2 text-lg font-bold text-league-hextech-black"
+								class="rounded-full border-2 border-league-hextech-black bg-linear-to-r from-league-blue-4 to-league-blue-2 px-2 text-sm font-bold text-league-hextech-black sm:border-4 sm:text-lg"
 							>
 								{data.data.summonerData.summonerLevel}
 							</span>
@@ -87,11 +93,11 @@
 					</div>
 
 					<div class="flex w-full flex-col justify-between pb-2">
-						<h1 class="font-beaufort text-3xl font-bold text-league-gold-1 md:text-4xl">
+						<h1 class="font-beaufort text-xl font-bold text-league-gold-1 sm:text-3xl md:text-4xl">
 							{data.data.riotAccountData.gameName}
 							<span class="text-league-grey-2">#{data.data.riotAccountData.tagLine}</span>
 						</h1>
-						<div class="flex w-full gap-2 md:gap-16">
+						<div class="flex w-full gap-4 md:gap-16">
 							{#if data.data.rankData.length === 0}
 								<div
 									class="flex h-16 items-center font-beaufort text-4xl text-league-blue-6 sm:text-5xl md:h-28 md:text-6xl"
@@ -102,7 +108,7 @@
 
 							{#each data.data.rankData as rankData}
 								<div class="flex h-16 items-center gap-3 md:h-28">
-									<div class="relative size-16 md:size-28">
+									<div class="relative hidden size-16 sm:block md:size-28">
 										<video
 											src="https://raw.communitydragon.org/pbe/plugins/rcp-fe-lol-static-assets/global/default/videos/ranked/tier-promotion-to-{rankData.tier.toLowerCase()}.webm"
 											autoplay

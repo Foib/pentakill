@@ -4,6 +4,28 @@ import getSummonerIconUrl from '$lib/getSummonerIconUrl.js';
 import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { registerFont, createCanvas, loadImage } from 'canvas';
+import path from 'path';
+
+import NotoSans from '$lib/assets/fonts/noto/NotoSans.ttf';
+import NotoSansArabic from '$lib/assets/fonts/noto/NotoSansArabic.ttf';
+import NotoSansJP from '$lib/assets/fonts/noto/NotoSansJP.ttf';
+import NotoSansKR from '$lib/assets/fonts/noto/NotoSansKR.ttf';
+import NotoSansSC from '$lib/assets/fonts/noto/NotoSansSC.ttf';
+import NotoSansSyriacWestern from '$lib/assets/fonts/noto/NotoSansSyriacWestern.ttf';
+import NotoSansThai from '$lib/assets/fonts/noto/NotoSansThai.ttf';
+
+const currentBasePath = process.cwd();
+
+registerFont(path.join(currentBasePath, NotoSans), { family: 'Noto Sans' });
+registerFont(path.join(currentBasePath, NotoSansArabic), { family: 'Noto Sans Arabic' });
+registerFont(path.join(currentBasePath, NotoSansJP), { family: 'Noto Sans JP' });
+registerFont(path.join(currentBasePath, NotoSansKR), { family: 'Noto Sans KR' });
+registerFont(path.join(currentBasePath, NotoSansSC), { family: 'Noto Sans SC' });
+registerFont(path.join(currentBasePath, NotoSansSyriacWestern), {
+	family: 'Noto Sans Syriac Western'
+});
+registerFont(path.join(currentBasePath, NotoSansThai), { family: 'Noto Sans Thai' });
 
 export const load = async ({ params, fetch }) => {
 	if (!env.VITE_RIOT_API_KEY) {
@@ -37,7 +59,9 @@ export const load = async ({ params, fetch }) => {
 			rankData = await getRankData(region[0], summonerData.puuid, env.VITE_RIOT_API_KEY);
 			await getMatchIds(region[1], summonerData.puuid, env.VITE_RIOT_API_KEY).then(
 				async (matchData) => {
-					isRiotStatusCode(matchData);
+					if (isRiotStatusCode(matchData)) {
+						throw error(500, 'Error fetching match data');
+					}
 
 					matchData.forEach((matchId: string) => {
 						matchPromises.push(
@@ -58,11 +82,32 @@ export const load = async ({ params, fetch }) => {
 		}
 	);
 
+	const canvas = createCanvas(200, 200);
+	const ctx = canvas.getContext('2d');
+
+	await loadImage(data.summonerIconUrl).then((image) => {
+		ctx.drawImage(image, 0, 0, 200, 200);
+		ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+		ctx.fillRect(0, 0, 200, 200);
+
+		ctx.font =
+			"bold 20px 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans Syriac Western', 'Noto Sans Thai', sans-serif";
+		ctx.shadowColor = 'black';
+		ctx.shadowBlur = 4;
+
+		ctx.fillStyle = '#f0e6d2';
+		ctx.fillText(data.riotAccountData.gameName, 10, 100);
+
+		ctx.fillStyle = '#a09b8c';
+		ctx.fillText('#' + data.riotAccountData.tagLine, 10, 120);
+	});
+
 	if (isRiotStatusCode(data.summonerData) && data.summonerData.status.status_code === 404) {
 		throw redirect(302, '/');
 	} else {
 		return {
 			data,
+			image: canvas.toDataURL(),
 			slug: params.slug
 		};
 	}

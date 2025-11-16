@@ -1,9 +1,10 @@
 <script lang="ts">
-	export let title = 'PENTAKILL.LOL';
-	export let description =
-		'Analyze player profiles, strategize with in-depth insights and create custom leaderboards to challenge friends. Join PENTAKILL.LOL now and elevate your League of Legends experience.';
-	export let url = 'https://www.pentakill.lol/';
-	export let image = '';
+	let {
+		title = 'PENTAKILL.LOL',
+		description = 'Analyze player profiles, strategize with in-depth insights and create custom leaderboards to challenge friends. Join PENTAKILL.LOL now and elevate your League of Legends experience.',
+		url = 'https://www.pentakill.lol/',
+		image = ''
+	} = $props();
 </script>
 
 <svelte:head>
