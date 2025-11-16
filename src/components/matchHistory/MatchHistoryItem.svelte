@@ -10,10 +10,14 @@
 	import MatchOverview from './MatchOverview.svelte';
 	import { convertNumberToItemIndex } from '$lib/convertNumberToItemIndex';
 	import { numberWithCommas } from '$lib/numberWithCommas';
+	import MatchOverviewStats from './MatchOverviewStats.svelte';
+	import MatchOverviewTimeline from './MatchOverviewTimeline.svelte';
 
 	let { match, reload }: { match: CustomMatchDto; reload: any } = $props();
+
 	let overviewRendered = $state(false);
 	let isOverviewExpanded = $state(false);
+	let overviewTab = $state('stats');
 
 	function formatGameDuration(duration: number) {
 		duration = duration / 60;
@@ -243,6 +247,12 @@
 	</button>
 
 	{#if overviewRendered}
-		<MatchOverview {match} bind:expanded={isOverviewExpanded} />
+		<MatchOverview bind:expanded={isOverviewExpanded} bind:tab={overviewTab}>
+			{#if overviewTab === 'stats'}
+				<MatchOverviewStats {match} />
+			{:else if overviewTab === 'timeline'}
+				<MatchOverviewTimeline {match} expanded={isOverviewExpanded} />
+			{/if}
+		</MatchOverview>
 	{/if}
 </div>

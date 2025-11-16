@@ -1,16 +1,11 @@
 <script lang="ts">
-	import type { CustomMatchDto } from '$lib/riotTypes/Misc';
-	import { onMount } from 'svelte';
-	import overviewBackground from '$lib/assets/overview_bg.jpg';
-	import ItemBar from './ItemBar.svelte';
-	import { convertNumberToItemIndex } from '$lib/convertNumberToItemIndex';
-	import { numberWithCommas } from '$lib/numberWithCommas';
-	import iconGold from '$lib/assets/icon_gold.png';
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { onMount, type Snippet } from 'svelte';
 
-	const region = page.url.pathname.split('/')[2];
-	let { match, expanded = $bindable() }: { match: CustomMatchDto; expanded: boolean } = $props();
+	let {
+		expanded = $bindable(),
+		tab = $bindable(),
+		children
+	}: { expanded: boolean; tab: string; children: Snippet<[]> } = $props();
 	let firstRender = $state(true);
 
 	onMount(() => {
@@ -22,121 +17,21 @@
 
 <div
 	class="w-full overflow-hidden bg-league-hextech-black transition-all duration-500"
-	style={!firstRender && expanded ? 'height: 490px;' : 'height: 0px;'}
+	style={!firstRender && expanded ? 'height: 530px;' : 'height: 0px;'}
 >
-	<div
-		class="my-4 overflow-hidden rounded-lg border border-league-grey-cool p-4"
-		style="width: 100%; height: calc(100% - 16px); background-image: url({overviewBackground});"
-	>
-		<div>
-			{#each [...match.info.teams].sort( (a, _) => (a.teamId === match.currentSummoner.teamId ? -1 : 1) ) as team, i}
-				<table class="mb-4 w-full table-fixed">
-					<thead>
-						<tr class="h-8 font-beaufort font-bold {i === 0 ? 'text-[#0a96aa]' : 'text-[#be1e37]'}">
-							<th class="w-56 text-left">
-								<span class="mr-6">
-									TEAM {team.teamId / 100}
-								</span>
-
-								<span>
-									{match.info.participants.reduce(
-										(acc, p) => (p.teamId === team.teamId ? acc + p.kills : acc),
-										0
-									)} <span class="mx-1">/</span>
-									{match.info.participants.reduce(
-										(acc, p) => (p.teamId === team.teamId ? acc + p.deaths : acc),
-										0
-									)} <span class="mx-1">/</span>
-									{match.info.participants.reduce(
-										(acc, p) => (p.teamId === team.teamId ? acc + p.assists : acc),
-										0
-									)}
-								</span>
-							</th>
-
-							<th class="hidden w-40 md:table-cell">
-								<div class="flex items-center justify-center gap-2 text-league-grey-1">
-									<span>
-										{numberWithCommas(
-											match.info.participants.reduce(
-												(acc, p) => (p.teamId === team.teamId ? acc + p.goldEarned : acc),
-												0
-											)
-										)}
-									</span>
-									<img src={iconGold} alt="Gold" class="h-4" />
-								</div>
-							</th>
-
-							<th
-								class="w-20 px-2 text-center font-beaufort text-league-grey-2 sm:w-40 sm:pr-4 sm:pl-6"
-								>KDA</th
-							>
-
-							<th class="text-center font-beaufort text-league-grey-2">CS</th>
-
-							<th class="text-center font-beaufort text-league-grey-2">Gold</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each match.info.participants.filter((p) => p.teamId === team.teamId) as participant}
-							<tr class="h-9">
-								<td>
-									<button
-										class="group flex cursor-pointer items-center gap-2"
-										onclick={() => {
-											goto(
-												`/summoner/${region}/${participant.riotIdGameName}-${participant.riotIdTagline}`
-											);
-										}}
-									>
-										<p class="w-6 font-beaufort text-league-gold-1">{participant.champLevel}</p>
-										<div class="size-8 overflow-hidden rounded-full border-2 border-league-gold-4">
-											<img
-												src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{participant.championId}.png"
-												alt={participant.championName}
-												title={participant.championName}
-												class="scale-[1.15]"
-											/>
-										</div>
-										<p
-											class="font-spiegel text-sm font-semibold text-league-grey-1 transition-colors group-hover:text-league-gold-1"
-										>
-											{participant.riotIdGameName}
-										</p>
-									</button>
-								</td>
-								<td class="hidden w-40 md:table-cell">
-									<div class="flex h-6 border border-league-gold-5">
-										{#each { length: 7 } as _, i}
-											<ItemBar {participant} itemIndex={convertNumberToItemIndex(i)} />
-										{/each}
-									</div>
-								</td>
-								<td
-									class="px-2 text-center font-beaufort text-xs text-league-gold-1 sm:pr-4 sm:pl-6 sm:text-base"
-								>
-									<div class="grid w-full grid-cols-11">
-										<span class="col-span-3">{participant.kills}</span><span
-											class="text-league-grey-2">/</span
-										>
-										<span class="col-span-3">{participant.deaths}</span><span
-											class="text-league-grey-2">/</span
-										>
-										<span class="col-span-3">{participant.assists}</span>
-									</div>
-								</td>
-								<td class="text-center font-beaufort text-xs text-league-gold-1 sm:text-base">
-									{participant.totalMinionsKilled + participant.neutralMinionsKilled}
-								</td>
-								<td class="text-center font-beaufort text-xs text-league-gold-1 sm:text-base">
-									{numberWithCommas(participant.goldEarned)}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			{/each}
-		</div>
+	<div class="mt-5 flex h-5 items-center gap-4">
+		<button
+			class="grow cursor-pointer rounded-full font-beaufort font-semibold text-league-gold-1 opacity-50 transition-all hover:bg-league-grey-4 hover:opacity-100"
+			onclick={() => (tab = 'stats')}
+		>
+			Stats
+		</button>
+		<button
+			class="grow cursor-pointer rounded-full font-beaufort font-semibold text-league-gold-1 opacity-50 transition-all hover:bg-league-grey-4 hover:opacity-100"
+			onclick={() => (tab = 'timeline')}>Timeline</button
+		>
+	</div>
+	<div class="h-[490px]">
+		{@render children()}
 	</div>
 </div>
