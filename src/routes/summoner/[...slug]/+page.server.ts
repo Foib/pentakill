@@ -5,28 +5,9 @@ import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib
 import type { MatchV5TimelineDTOs } from 'twisted/dist/models-dto';
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { registerFont, createCanvas, loadImage } from 'canvas';
-import path from 'path';
-
-import NotoSans from '$lib/assets/fonts/noto/NotoSans.ttf';
-import NotoSansArabic from '$lib/assets/fonts/noto/NotoSansArabic.ttf';
-import NotoSansJP from '$lib/assets/fonts/noto/NotoSansJP.ttf';
-import NotoSansKR from '$lib/assets/fonts/noto/NotoSansKR.ttf';
-import NotoSansSC from '$lib/assets/fonts/noto/NotoSansSC.ttf';
-import NotoSansSyriacWestern from '$lib/assets/fonts/noto/NotoSansSyriacWestern.ttf';
-import NotoSansThai from '$lib/assets/fonts/noto/NotoSansThai.ttf';
-
-const currentBasePath = process.cwd();
-
-registerFont(path.join(currentBasePath, NotoSans), { family: 'Noto Sans' });
-registerFont(path.join(currentBasePath, NotoSansArabic), { family: 'Noto Sans Arabic' });
-registerFont(path.join(currentBasePath, NotoSansJP), { family: 'Noto Sans JP' });
-registerFont(path.join(currentBasePath, NotoSansKR), { family: 'Noto Sans KR' });
-registerFont(path.join(currentBasePath, NotoSansSC), { family: 'Noto Sans SC' });
-registerFont(path.join(currentBasePath, NotoSansSyriacWestern), {
-	family: 'Noto Sans Syriac Western'
-});
-registerFont(path.join(currentBasePath, NotoSansThai), { family: 'Noto Sans Thai' });
+import { createCanvas, loadImage } from 'canvas';
+import getRankedQueueName from '$lib/getRankedQueueName.js';
+//import path from 'node:path';
 
 export const load = async ({ params, fetch }) => {
 	if (!env.VITE_RIOT_API_KEY) {
@@ -83,31 +64,104 @@ export const load = async ({ params, fetch }) => {
 		}
 	);
 
-	const canvas = createCanvas(200, 200);
-	const ctx = canvas.getContext('2d');
-
-	await loadImage(data.summonerIconUrl).then((image) => {
-		ctx.drawImage(image, 0, 0, 200, 200);
-		ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-		ctx.fillRect(0, 0, 200, 200);
-
-		ctx.font =
-			"bold 20px 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans Syriac Western', 'Noto Sans Thai', sans-serif";
-		ctx.shadowColor = 'black';
-		ctx.shadowBlur = 4;
-
-		ctx.fillStyle = '#f0e6d2';
-		ctx.fillText(data.riotAccountData.gameName, 10, 100);
-
-		ctx.fillStyle = '#a09b8c';
-		ctx.fillText('#' + data.riotAccountData.tagLine, 10, 120);
-	});
-
 	if (isRiotStatusCode(data.summonerData) && data.summonerData.status.status_code === 404) {
 		throw redirect(302, '/');
 	} else {
+		const canvas = createCanvas(400, 400);
+		const ctx = canvas.getContext('2d');
+
+		await loadImage(data.summonerIconUrl).then((image) => {
+			ctx.drawImage(image, 0, 0, 400, 400);
+			ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+			ctx.fillRect(0, 0, 400, 400);
+
+			const fontFamily =
+				"'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans Syriac Western', 'Noto Sans Thai', sans-serif";
+			ctx.font = 'bold 40px ' + fontFamily;
+			ctx.shadowColor = 'black';
+			ctx.shadowBlur = 4;
+			ctx.textBaseline = 'middle';
+
+			ctx.fillStyle = '#f0e6d2';
+			ctx.fillText(data.riotAccountData.gameName, 20, 140);
+			ctx.fillStyle = '#a09b8c';
+			ctx.fillText('#' + data.riotAccountData.tagLine, 20, 180);
+
+			let y = 220;
+			for (const rankData of data.rankData) {
+				ctx.font = '18px ' + fontFamily;
+				ctx.fillStyle = '#f0e6d2';
+				ctx.fillText(getRankedQueueName(rankData.queueType), 20, y);
+				y += 25;
+
+				ctx.font = 'bold 24px ' + fontFamily;
+
+				const rankText = rankData.tier + ' ' + rankData.rank;
+				const textMetrics = ctx.measureText(rankText);
+				const textHeight =
+					textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
+
+				switch (rankData.tier) {
+					case 'IRON':
+						ctx.fillStyle = '#3b3b3b';
+						break;
+					case 'BRONZE':
+						ctx.fillStyle = '#cd7f32';
+						break;
+					case 'SILVER':
+						ctx.fillStyle = '#c0c0c0';
+						break;
+					case 'GOLD':
+						ctx.fillStyle = '#ffd700';
+						break;
+					case 'PLATINUM':
+						ctx.fillStyle = '#00e5ee';
+						break;
+					case 'EMERALD':
+						ctx.fillStyle = '#50c878';
+						break;
+					case 'DIAMOND':
+						ctx.fillStyle = '#1e90ff';
+						break;
+					case 'MASTER':
+						ctx.fillStyle = '#800080';
+						break;
+					case 'GRANDMASTER':
+						ctx.fillStyle = '#ff4500';
+						break;
+					case 'CHALLENGER':
+						const grd = ctx.createLinearGradient(0, y - textHeight / 2, 0, y + textHeight / 2);
+						grd.addColorStop(0, '#1FBFFF');
+						grd.addColorStop(0.5, '#EDABFF');
+						grd.addColorStop(1, '#FFEC40');
+						ctx.fillStyle = grd;
+						break;
+					default:
+						ctx.fillStyle = '#ffffff';
+				}
+
+				ctx.fillText(rankText, 20, y);
+
+				y += 30;
+			}
+		});
+
+		// const fileId = crypto.randomUUID();
+		// const buffer = canvas.toBuffer();
+
+		// import.meta.glob("$lib");
+
+		// const filePath = path.join(, 'metaImage', `${fileId}.png`);
+		// await Bun.write(filePath, buffer);
+
+		// setTimeout(() => {
+		// 	const file = Bun.file(filePath);
+		// 	file.delete();
+		// }, 60000);
+
 		return {
 			data,
+			//image: `/metaImage/${fileId}.png`,
 			image: canvas.toDataURL(),
 			slug: params.slug
 		};

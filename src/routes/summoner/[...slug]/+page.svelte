@@ -6,6 +6,7 @@
 	import SocialMediaMetaTags from '../../../components/SocialMediaMetaTags.svelte';
 	import getRankedQueueName from '$lib/getRankedQueueName.js';
 	import spinner from '$lib/assets/spinner.png';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -17,7 +18,7 @@
 
 		console.log(
 			'%c  ',
-			`font-size:200px;background:url(\"${data.image}\");background-size:contain;background-repeat:no-repeat;`
+			`font-size:400px;background:url(\"${data.image}\");background-size:contain;background-repeat:no-repeat;`
 		);
 	});
 
