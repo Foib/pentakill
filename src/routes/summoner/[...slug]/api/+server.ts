@@ -54,7 +54,7 @@ async function getSummonerData(region: string, puuid: string, api_key: string) {
 
 async function getMatchIds(region: string, puuid: string, startIndex: number, api_key: string) {
 	const matchDataJson = await fetch(
-		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${startIndex}&count=2&api_key=${api_key}`
+		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${startIndex}&count=5&api_key=${api_key}`
 	);
 	const matchData: string[] = await matchDataJson.json();
 
