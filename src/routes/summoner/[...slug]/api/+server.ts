@@ -1,5 +1,6 @@
 import getRegion from '$lib/getRegion.js';
 import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib/riotTypes/Misc.js';
+import type { MatchV5TimelineDTOs } from 'twisted/dist/models-dto';
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
@@ -53,7 +54,7 @@ async function getSummonerData(region: string, puuid: string, api_key: string) {
 
 async function getMatchIds(region: string, puuid: string, startIndex: number, api_key: string) {
 	const matchDataJson = await fetch(
-		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${startIndex}&count=10&api_key=${api_key}`
+		`https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${startIndex}&count=2&api_key=${api_key}`
 	);
 	const matchData: string[] = await matchDataJson.json();
 
@@ -65,10 +66,19 @@ async function getMatchData(region: string, matchId: string, summonerData: any, 
 		`https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${api_key}`
 	);
 	const matchData: CustomMatchDto = await matchDataJson.json();
+
+	const matchTimelineJson = await fetch(
+		`https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}/timeline?api_key=${api_key}`
+	);
+	const matchTimelineData: MatchV5TimelineDTOs.MatchTimelineDto = await matchTimelineJson.json();
+
 	matchData.info.participants.forEach((participant: any) => {
 		if (participant.puuid === summonerData.puuid) {
 			matchData.currentSummoner = participant;
 		}
 	});
+
+	matchData.timeline = matchTimelineData;
+
 	return matchData;
 }

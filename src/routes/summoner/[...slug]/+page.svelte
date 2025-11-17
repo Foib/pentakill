@@ -29,15 +29,13 @@
 
 	function updateMatches() {
 		console.log('Updating matches');
+		console.log(data.data.matches);
 		matches = data.data.matches;
 	}
 
 	function loadMoreMatches() {
 		loadingMatches = true;
-
 		const startIndex = matches?.length || 0;
-
-		console.log(startIndex);
 
 		fetch(
 			`./api?region=${data.data.region}&puuid=${data.data.summonerData.puuid}&startIndex=${startIndex}`

@@ -1,5 +1,9 @@
 @import url('./fonts.css');
 @import 'tailwindcss';
+@source '../node_modules/layerchart/dist';
+
+@import '@layerstack/tailwind/core.css';
+@import '@layerstack/tailwind/themes/all.css';
 
 @theme {
 	--color-league-blue-1: #cdfafa;
@@ -26,7 +30,7 @@
 
 	--color-league-hextech-black: #010a13;
 
-	--font-beaufort: 'Beaufort for LOL', sans-serif;
+	--font-beaufort: 'Beaufort', sans-serif;
 	--font-spiegel: 'Spiegel', sans-serif;
 }
 

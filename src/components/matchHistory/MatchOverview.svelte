@@ -1,16 +1,11 @@
 <script lang="ts">
-	import type { CustomMatchDto } from '$lib/riotTypes/Misc';
-	import { onMount } from 'svelte';
-	import overviewBackground from '$lib/assets/overview_bg.jpg';
-	import ItemBar from './ItemBar.svelte';
-	import { convertNumberToItemIndex } from '$lib/convertNumberToItemIndex';
-	import { numberWithCommas } from '$lib/numberWithCommas';
-	import iconGold from '$lib/assets/icon_gold.png';
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { onMount, type Snippet } from 'svelte';
 
-	const region = page.url.pathname.split('/')[2];
-	let { match, expanded = $bindable() }: { match: CustomMatchDto; expanded: boolean } = $props();
+	let {
+		expanded = $bindable(),
+		tab = $bindable(),
+		children
+	}: { expanded: boolean; tab: string; children: Snippet<[]> } = $props();
 	let firstRender = $state(true);
 
 	onMount(() => {
