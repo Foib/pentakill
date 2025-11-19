@@ -5,7 +5,7 @@ import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib
 import type { MatchV5TimelineDTOs } from 'twisted/dist/models-dto';
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { Canvas, CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
+import { type Canvas, type CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
 import getRankedQueueName from '$lib/getRankedQueueName.js';
 import { S3Client } from 'bun';
 
@@ -103,11 +103,11 @@ export const load = async ({ params, fetch }) => {
 			ctx.textBaseline = 'middle';
 
 			ctx.fillStyle = '#f0e6d2';
-			ctx.fillText(data.riotAccountData.gameName, 20, 140);
+			ctx.fillText(data.riotAccountData.gameName, 20, 125);
 			ctx.fillStyle = '#a09b8c';
-			ctx.fillText('#' + data.riotAccountData.tagLine, 20, 180);
+			ctx.fillText('#' + data.riotAccountData.tagLine, 20, 165);
 
-			let y = 220;
+			let y = 205;
 			for (const rankData of data.rankData) {
 				ctx.font = '18px ' + fontFamily;
 				ctx.fillStyle = '#f0e6d2';
