@@ -8,6 +8,8 @@
 	import spinner from '$lib/assets/spinner.png';
 	import { page } from '$app/state';
 
+	console.log(page.error);
+
 	let { data } = $props();
 
 	let matches = $state<CustomMatchDto[] | null>(null);

@@ -5,7 +5,7 @@ import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib
 import type { MatchV5TimelineDTOs } from 'twisted/dist/models-dto';
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { createCanvas, loadImage } from 'canvas';
+import { Canvas, CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
 import getRankedQueueName from '$lib/getRankedQueueName.js';
 import { S3Client } from 'bun';
 
@@ -77,11 +77,20 @@ export const load = async ({ params, fetch }) => {
 
 	if (isRiotStatusCode(data.summonerData) && data.summonerData.status.status_code === 404) {
 		throw redirect(302, '/');
-	} else {
-		const canvas = createCanvas(400, 400);
-		const ctx = canvas.getContext('2d');
+	}
+
+	let canvas: Canvas | null = null;
+	let ctx: CanvasRenderingContext2D | null = null;
+
+	try {
+		canvas = createCanvas(400, 400);
+		ctx = canvas.getContext('2d');
 
 		await loadImage(data.summonerIconUrl).then((image) => {
+			if (!ctx) {
+				throw error(500, 'Error creating image context');
+			}
+
 			ctx.drawImage(image, 0, 0, 400, 400);
 			ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
 			ctx.fillRect(0, 0, 400, 400);
@@ -156,22 +165,24 @@ export const load = async ({ params, fetch }) => {
 				y += 30;
 			}
 		});
-
-		const fileId = crypto.randomUUID();
-		const buffer = Buffer.from(canvas.toBuffer());
-		const file = b2client.file('summoner_meta_image/' + fileId + '.png');
-
-		await file.write(buffer, {
-			type: 'image/png',
-			acl: 'public-read'
-		});
-
-		return {
-			data,
-			image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.png`,
-			slug: params.slug
-		};
+	} catch (e) {
+		throw error(500, 'Error generating image');
 	}
+
+	const fileId = crypto.randomUUID();
+	const buffer = Buffer.from(canvas.toBuffer());
+	const file = b2client.file('summoner_meta_image/' + fileId + '.png');
+
+	await file.write(buffer, {
+		type: 'image/png',
+		acl: 'public-read'
+	});
+
+	return {
+		data,
+		image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.png`,
+		slug: params.slug
+	};
 };
 
 async function getSummonerData(region: string, puuid: string, api_key: string) {
