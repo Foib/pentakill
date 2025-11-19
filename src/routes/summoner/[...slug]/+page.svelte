@@ -15,11 +15,7 @@
 
 	onMount(() => {
 		document.title = `${data.data.riotAccountData.gameName}#${data.data.riotAccountData.tagLine} - PENTAKILL.LOL`;
-
-		console.log(
-			'%c  ',
-			`font-size:400px;background:url(\"${data.image}\");background-size:contain;background-repeat:no-repeat;`
-		);
+		console.log(data.image);
 	});
 
 	$effect(() => {

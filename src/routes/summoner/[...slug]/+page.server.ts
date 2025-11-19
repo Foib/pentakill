@@ -7,7 +7,18 @@ import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { createCanvas, loadImage } from 'canvas';
 import getRankedQueueName from '$lib/getRankedQueueName.js';
-//import path from 'node:path';
+import { S3Client } from 'bun';
+
+if (!env.VITE_BACKBLAZE_KEY || !env.VITE_BACKBLAZE_KEY_ID) {
+	throw error(500, 'Server misconfiguration: Backblaze application keys are missing');
+}
+
+const b2client = new S3Client({
+	accessKeyId: env.VITE_BACKBLAZE_KEY_ID,
+	secretAccessKey: env.VITE_BACKBLAZE_KEY,
+	bucket: 'pentakill',
+	endpoint: 'https://s3.us-east-005.backblazeb2.com'
+});
 
 export const load = async ({ params, fetch }) => {
 	if (!env.VITE_RIOT_API_KEY) {
@@ -146,23 +157,18 @@ export const load = async ({ params, fetch }) => {
 			}
 		});
 
-		// const fileId = crypto.randomUUID();
-		// const buffer = canvas.toBuffer();
+		const fileId = crypto.randomUUID();
+		const buffer = Buffer.from(canvas.toBuffer());
+		const file = b2client.file('summoner_meta_image/' + fileId + '.png');
 
-		// import.meta.glob("$lib");
-
-		// const filePath = path.join(, 'metaImage', `${fileId}.png`);
-		// await Bun.write(filePath, buffer);
-
-		// setTimeout(() => {
-		// 	const file = Bun.file(filePath);
-		// 	file.delete();
-		// }, 60000);
+		await file.write(buffer, {
+			type: 'image/png',
+			acl: 'public-read'
+		});
 
 		return {
 			data,
-			//image: `/metaImage/${fileId}.png`,
-			image: canvas.toDataURL(),
+			image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.png`,
 			slug: params.slug
 		};
 	}
