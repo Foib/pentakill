@@ -169,17 +169,17 @@ export const load = async ({ params, fetch }) => {
 	}
 
 	const fileId = crypto.randomUUID();
-	const buffer = await canvas.toBuffer('image/jpeg', 0.9);
-	const file = b2client.file('summoner_meta_image/' + fileId + '.jpeg');
+	const buffer = canvas.toBuffer('image/png');
+	const file = b2client.file('summoner_meta_image/' + fileId + '.png');
 
 	await file.write(buffer, {
-		type: 'image/jpeg',
+		type: 'image/png',
 		acl: 'public-read'
 	});
 
 	return {
 		data,
-		image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.jpeg`,
+		image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.png`,
 		slug: params.slug
 	};
 };
