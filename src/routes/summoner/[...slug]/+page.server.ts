@@ -5,7 +5,7 @@ import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib
 import type { MatchV5TimelineDTOs } from 'twisted/dist/models-dto';
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { type Canvas, type CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
+import { type Canvas, createCanvas, loadImage } from '@napi-rs/canvas';
 import getRankedQueueName from '$lib/getRankedQueueName.js';
 import { S3Client } from 'bun';
 
@@ -80,11 +80,10 @@ export const load = async ({ params, fetch }) => {
 	}
 
 	let canvas: Canvas | null = null;
-	let ctx: CanvasRenderingContext2D | null = null;
 
 	try {
 		canvas = createCanvas(400, 400);
-		ctx = canvas.getContext('2d');
+		const ctx = canvas.getContext('2d');
 
 		await loadImage(data.summonerIconUrl).then((image) => {
 			if (!ctx) {
@@ -170,17 +169,17 @@ export const load = async ({ params, fetch }) => {
 	}
 
 	const fileId = crypto.randomUUID();
-	const buffer = Buffer.from(canvas.toBuffer());
-	const file = b2client.file('summoner_meta_image/' + fileId + '.png');
+	const buffer = await canvas.toBuffer('image/jpeg', 0.9);
+	const file = b2client.file('summoner_meta_image/' + fileId + '.jpeg');
 
 	await file.write(buffer, {
-		type: 'image/png',
+		type: 'image/jpeg',
 		acl: 'public-read'
 	});
 
 	return {
 		data,
-		image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.png`,
+		image: `https://f005.backblazeb2.com/file/pentakill/summoner_meta_image/${fileId}.jpeg`,
 		slug: params.slug
 	};
 };

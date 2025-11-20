@@ -28,6 +28,10 @@ export async function GET(event) {
 				async (matchData) => {
 					isRiotStatusCode(matchData);
 
+					if (isRiotStatusCode(matchData)) {
+						return json({ message: 'Not Found', status: 404 });
+					}
+
 					let matchPromises: Promise<CustomMatchDto>[] = [];
 					matchData.forEach((matchId: string) => {
 						matchPromises.push(
