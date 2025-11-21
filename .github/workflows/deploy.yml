@@ -28,7 +28,7 @@ jobs:
           VITE_RIOT_API_KEY=${{ secrets.ENV_RIOT_API_KEY }} VITE_BACKBLAZE_KEY=${{ secrets.ENV_BACKBLAZE_KEY }} VITE_BACKBLAZE_KEY_ID=${{ secrets.ENV_BACKBLAZE_KEY_ID }} bunx --bun vite build
 
       - name: Deploy to server
-        uses: appleboy/scp-action@v1
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
