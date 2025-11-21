@@ -5,7 +5,7 @@ import { isRiotStatusCode, type CustomMatchDto, type RiotStatusCode } from '$lib
 import type { MatchV5DTOs, MatchV5TimelineDTOs } from 'twisted/dist/models-dto';
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { type Canvas, createCanvas, loadImage } from '@napi-rs/canvas';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import getRankedQueueName from '$lib/getRankedQueueName.js';
 import { S3Client } from 'bun';
 import { formatRankText } from '$lib/formatRankText';
