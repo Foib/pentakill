@@ -13,7 +13,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        secrets: inherit
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -26,7 +25,7 @@ jobs:
       - name: Build project
 
         run: |
-          VITE_RIOT_API_KEY=${{ secrets.RIOT_API_KEY }} VITE_BACKBLAZE_KEY=${{ secrets.BACKBLAZE_KEY }} VITE_BACKBLAZE_KEY_ID=${{ secrets.BACKBLAZE_KEY_ID }} bunx --bun vite build
+          VITE_RIOT_API_KEY=${{ secrets.ENV_RIOT_API_KEY }} VITE_BACKBLAZE_KEY=${{ secrets.ENV_BACKBLAZE_KEY }} VITE_BACKBLAZE_KEY_ID=${{ secrets.ENV_BACKBLAZE_KEY_ID }} bunx --bun vite build
 
       - name: Get SSH key
         run: |
