@@ -7,6 +7,7 @@
 	import getRankedQueueName from '$lib/getRankedQueueName.js';
 	import spinner from '$lib/assets/spinner.png';
 	import { page } from '$app/state';
+	import { formatRankText } from '$lib/formatRankText.js';
 
 	console.log(page.error);
 
@@ -58,7 +59,7 @@
 		description={`${data.data.riotAccountData.gameName}#${
 			data.data.riotAccountData.tagLine
 		} | Level ${data.data.summonerData.summonerLevel} | ${data.data.rankData
-			.map((r) => `${getRankedQueueName(r.queueType)}: ${r.tier} ${r.rank}`)
+			.map((r) => `${getRankedQueueName(r.queueType)}: ${formatRankText(r.tier, r.rank)}`)
 			.join(' | ')}`}
 		url={`https://www.pentakill.lol/summoner/${data.data.region}/${data.data.riotAccountData.gameName}-${data.data.riotAccountData.tagLine}`}
 		image={data.image}
@@ -123,8 +124,7 @@
 										<p
 											class="font-beaufort text-xs font-bold text-league-gold-1 sm:text-base md:text-xl"
 										>
-											{rankData.tier}
-											{rankData.rank}
+											{formatRankText(rankData.tier, rankData.rank)}
 										</p>
 										<p class="font-spiegel text-xs text-league-grey-1">
 											{rankData.wins}W {rankData.losses}L | {rankData.leaguePoints} LP

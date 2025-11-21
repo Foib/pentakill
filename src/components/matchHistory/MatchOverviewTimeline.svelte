@@ -8,7 +8,8 @@
 		LineChart,
 		Highlight,
 		Spline,
-		Tooltip
+		Tooltip,
+		RectClipPath
 	} from 'layerchart';
 	import { curveNatural } from 'd3-shape';
 	import { scaleTime } from 'd3-scale';
@@ -60,26 +61,32 @@
 	style="width: 100%; height: calc(100% - 16px);"
 >
 	<div class="flex w-full grow items-center justify-center">
-		<p class="font-beaufort text-xl text-league-grey-1">Gold Difference</p>
+		<p class="font-beaufort text-xl text-league-grey-1">Team Gold Difference</p>
 	</div>
 	<div class="h-[360px] w-full shrink-0 pt-2 pr-2 pb-6 pl-6">
 		<LineChart {data} x="time" y="gold" axis={false} yNice>
 			{#snippet marks({ context })}
-				{@const thresholdOffset = (context.yScale(50) / context.height) * 100 + '%'}
 				<Layer type={'svg'}>
-					<LinearGradient
-						stops={[
-							[thresholdOffset, '#0ad1ed'],
-							[thresholdOffset, '#ff2346']
-						]}
-						units="userSpaceOnUse"
-						vertical
+					<RectClipPath x={0} y={0} width={context.width} height={context.yScale(0)}>
+						<Area
+							line={{ class: 'stroke-2 stroke-[#0ad1ed]' }}
+							class="fill-[#0ad1ed]/20"
+							curve={curveNatural}
+						/>
+					</RectClipPath>
+					<RectClipPath
+						x={0}
+						y={context.yScale(0)}
+						width={context.width}
+						height={context.height - context.yScale(0)}
 					>
-						{#snippet children({ gradient })}
-							<Area curve={curveNatural} fill={gradient} fill-opacity="0.25" />
-							<Spline class="stroke-2" stroke={gradient} curve={curveNatural} />
-						{/snippet}
-					</LinearGradient>
+						<Area
+							line={{ class: 'stroke-2 stroke-[#ff2346]' }}
+							y0={(_) => 0}
+							class="fill-[#ff2346]/20"
+							curve={curveNatural}
+						/>
+					</RectClipPath>
 					<Axis
 						placement="bottom"
 						rule
