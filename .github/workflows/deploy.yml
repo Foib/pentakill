@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        secrets: inherit
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
